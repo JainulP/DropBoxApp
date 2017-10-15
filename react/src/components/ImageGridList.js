@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-// import {withStyles} from 'material-ui/styles';
-// import { MakeSelectable} from 'material-ui';
+import NavigationBar from "./NavigationBar";
+import HomePageHeader from "./homePageHeader";
 import {Button} from "react-bootstrap";
 import {Modal} from "react-bootstrap";
 import {DropdownButton} from "react-bootstrap";
 import {MenuItem} from "react-bootstrap";
+import { Route, withRouter } from 'react-router-dom';
 import '.././CSS/homePage.css';
 import * as API from '../api/API';
+import DirectoryFile from './DirectoryFile';
 
 //
 // const styles = theme => ({
@@ -31,8 +33,8 @@ class ImageGridList extends Component {
 
     static propTypes = {
         classes: PropTypes.object,
-        handleStar: PropTypes.func.isRequired,
-        handleDelete: PropTypes.func.isRequired
+        handleStar: PropTypes.func,
+        handleDelete: PropTypes.func
         //files: PropTypes.object
     };
 
@@ -42,7 +44,9 @@ class ImageGridList extends Component {
             dirPath :'',
             shareWith: '',
             shareDirectoryPath:'',
-            isStarred: false
+            isStarred: false,
+            showpage:false,
+            filesUnderDir: []
         };
         this.handleShare = this.handleShare.bind(this);
         this.handleFileUploadUnderDir= this.handleFileUploadUnderDir.bind(this);
@@ -73,6 +77,7 @@ class ImageGridList extends Component {
 
         console.log("shared with#####"+payload.shareWith);
         console.log("shared path#####"+payload.shareDirectoryPath);
+        console.log("shared pvia#####"+payload.shareType);
         API.shareDirectory(payload)
             .then((status) => {
             //     if (status === 204) {
@@ -86,6 +91,41 @@ class ImageGridList extends Component {
              });
 
     };
+
+    showFileUnderDir = (param) => {
+        API.getFileUnderDir(param)
+            .then((data) => {
+                //    this.setState({
+                //       filesUnderDir: data
+                //    });
+                // }, ()=>{this.props.history.push("/directoryfiles");}
+                // );
+
+                this.setState(
+                    {
+                        filesUnderDir: data,
+                        showpage: true
+                    },
+                    () => {
+                        console.log("Directory files redirected" + JSON.stringify(this.state.filesUnderDir));
+                         //this.props.history.push("/directoryfiles"),
+                        // console.log("mydiv3333"+ this.state.showpage);
+                        // var mydiv = null;
+                        // mydiv = (document.getElementById("main-wrapper"));
+                        // console.log("mfgfh",mydiv);
+                        // console.log("mydiv"+document.getElementById("main-wrapper").style);
+                        //  mydiv.style.display ="block";
+                        //  document.getElementById("file-list-table").style.display = "none";
+                        // document.getElementById("class-root").style.display = "none";
+                        //      document.getElementById("file-list-table1").style.display = "block";
+                        {/*<DirectoryFile  filesUnderDir= {this.state.filesUnderDir}/>*/}
+                        {/*this.props.history.push("/directoryfiles");*/}
+                    }
+                );});
+
+
+    };
+
 
     getInitialState = () => {
         return { showModal: false };
@@ -150,8 +190,8 @@ class ImageGridList extends Component {
 
 
         return (
-            <div className={classes.root}>
-                <table className="file-list-table" cols={10}>
+            <div className={classes.root} name="classes.root" id="classes.root">
+                <table className="file-list-table" name="file-list-table" id="file-list-table" cols={10} style={{display: "block"}}>
                     {this.props.files.map(file => (
                         <tbody>
 
@@ -172,7 +212,15 @@ class ImageGridList extends Component {
                                     </g>
                                 </svg>
                             </td>
-                            <td className="fileName">{file.filename}</td>
+                            <td className="fileName" onClick={event => {
+                                this.setState(
+                                    {
+                                        dirPath: file.filepath
+
+                                    },
+                                    () => this.showFileUnderDir(this.state.dirPath)
+                                );
+                            }}>{file.filename}</td>
                             <td  className="folder-icon">
                                 {/*show below button if star not clicked*/}
                                 <button
@@ -294,12 +342,15 @@ class ImageGridList extends Component {
                                         </Modal.Header>
 
                                         <Modal.Body>
-                                            <DropdownButton title="Dropdown" id="bg-nested-dropdown" onSelect={event=>{this.setState({shareType:event});}}>
+                                            <DropdownButton title="Share Via" id="bg-nested-dropdown" onSelect={event=>{this.setState({shareType:event});}}>
                                                 <MenuItem eventKey="username">Username</MenuItem>
                                                 <MenuItem eventKey="email">Email</MenuItem>
+                                                <MenuItem eventKey="email">Link</MenuItem>
                                             </DropdownButton>
                                             <input
-                                                type="email"
+                                                id="sharewith"
+                                                name="sharewith"
+                                                type="text"
                                                 onChange={event => {
                                                     this.setState({ shareWith: event.target.value });
                                                 }}
@@ -325,8 +376,51 @@ class ImageGridList extends Component {
                         </tbody>
                     ))}
                 </table>
-            </div>
+                {/*<div className="main-wrapper"  id ="main-wrapper" name="main-wrapper" style={{display: "none"}}>*/}
+                    {/*/!*<NavigationBar></NavigationBar>*!/*/}
+                    {/*/!*<HomePageHeader></HomePageHeader>*!/*/}
+                    {/*//logic of all list*/}
+                    {/*<div className="main-body-wrapper">*/}
+                        {/*<div className="maestro-app-content">*/}
+                            {/*<ul className="home-access-sections">*/}
+                                {/*<li className="home-access-section">*/}
+                                    {/*<h2 className="home-access-section__header"><div className="home-access-section__title"><div className="home-access-section__title-text"><div className="ue-effect-container">Shared with me</div></div></div></h2>*/}
+                                {/*</li>*/}
+                                {/*<li className="home-access-section">*/}
+                                    {/*<h2 className="home-access-section__header"><div className="home-access-section__title"><div className="home-access-section__title-text"><div className="ue-effect-container">My files</div></div></div></h2>*/}
+                                {/*</li>*/}
+                                {/*<li>*/}
+                                    {/*/!*<ImageGridList files={this.state.filesUnderDir} handleStar = {this.handleStar} handleDelete = {this.handleDelete}/>*!/*/}
+                                {/*</li>*/}
+                            {/*</ul>*/}
+                        {/*</div>*/}
+                        {/*/!*<div className="right-section-nav">*!/*/}
+                            {/*/!*<input*!/*/}
+                                {/*/!*className={'fileupload'}*!/*/}
+                                {/*/!*type="file"*!/*/}
+                                {/*/!*name="mypic"*!/*/}
+                                {/*/!*onChange={this.handleFileUpload}*!/*/}
+                           {/*/>*/}
+                            {/*/!*<div className="form-group">*!/*/}
+                                {/*/!*<button*!/*/}
+                                    {/*/!*className="btn btn-primary"*!/*/}
+                                    {/*/!*type="button"*!/*/}
+                                    {/*/!*onClick={this.handleLogout}*!/*/}
+                                {/*/!*>*!/*/}
+                                    {/*/!*Logout*!/*/}
+                                {/*/!*</button>*!/*/}
+                            {/*/!*</div>*!/*/}
 
+
+                        {/*/!*</div>*!/*/}
+
+                    {/*</div>*/}
+                {/*</div>*/}
+                {/*<table className="file-list-table1" name="file-list-table1" id="file-list-table1" cols={10} style={{display: "none"}} ref="myref">*/}
+                    {/*{console.log("inside component"+ JSON.stringify(this.state.filesUnderDir))}*/}
+                    {/*<DirectoryFile  filesUnderDir= {this.state.filesUnderDir}/>*/}
+                {/*</table>*/}
+            </div>
 
         );
     }
@@ -334,4 +428,4 @@ class ImageGridList extends Component {
 
 }
 
-export default ImageGridList;
+export default withRouter(ImageGridList);

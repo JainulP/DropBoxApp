@@ -1,27 +1,171 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import Message from "./Message";
+import * as API from '../api/API';
+import { Route, withRouter } from 'react-router-dom';
 
 class SignUp extends Component {
     static propTypes = {
-        handleSignup: PropTypes.func.isRequired
+        //handleSignup: PropTypes.func.isRequired
     };
 
     state = {
         firstname: "",
         lastname: "",
         email:"",
-        password:""
+        password:"",
+        message:"",
+        isFormValid: false
     };
 
     componentWillMount() {
+        document.title = `Signup - Dropbox`;
         this.setState({
             firstname: "",
             lastname: "",
             email:"",
-            password:""
+            password:"",
+            message:"",
+            isFormValid: false
         });
     }
 
+    handleSignup = (userdata) => {
+        this.handleValidation(userdata);
+        console.log("form validity"+ this.state.isFormValid);
+        if(this.state.isFormValid || this.state.isFormValid == "true") {
+            API.doSignUp(userdata)
+                .then((status) => {
+                    if (status === 201) {
+                        this.setState({
+                            isLoggedIn: true,
+                            // message: "Welcome to my App..!!",
+                            username: userdata.username
+                        });
+                        this.props.history.push("/login");
+                    } else if (status === 401) {
+                        this.setState({
+                            isLoggedIn: false,
+                            message: "Wrong username or password. Try again..!!"
+                        });
+                    }
+                });
+        }
+    };
+
+    handleValidation(userdata) {
+        console.log("Inside validation function" + userdata);
+        var firstname = (userdata)["firstname"];
+        var lastname = (userdata)["lastname"];
+        var email = (userdata)["email"];
+        var password = (userdata)["password"];
+        var message1;
+        var isFormValid1 = false;
+        console.log("Firstname is" + firstname);
+
+        if (firstname == null || firstname == "") {
+            // this.setState({
+            //     isFormValid: false,
+            //     message: "First name cannot be empty!"
+            // });
+                isFormValid1= false;
+                message1=  "First name cannot be empty!";
+                console.log(message1);
+        }
+        // else if (typeof firstname !== "undefined") {
+        //     console.log("first name not undefined");
+        //     if (!firstname.match(/^[a-zA-Z]+$/)) {
+        //         console.log("not matched");
+        //         // this.setState({
+        //         //     isFormValid: false,
+        //         //     message: "First name should contain characters only!"
+        //         // });
+        //         isFormValid1= false;
+        //         message1=  "First name should contain characters only!";
+        //         console.log(message1);
+        //     }
+        //     console.log("first name not undefined11");
+        // }
+        //  else if (lastname == null || lastname == "") {
+        //     console.log("last name not undefined");
+        //     // this.setState({
+        //     //     isFormValid: false,
+        //     //     message: "Last name cannot be empty!"
+        //     // });
+        //     isFormValid1= false;
+        //     message1=  "Last name cannot be empty!";
+        //     console.log(message1);
+        // }
+        // else if (typeof lastname !== "undefined") {
+        //     if (!lastname.match(/^[a-zA-Z]+$/)) {
+        //         // this.setState({
+        //         //     isFormValid: false,
+        //         //     message: "Last name should contain characters only!"
+        //         // });
+        //         isFormValid1= false;
+        //         message1=  "Last name should contain characters only!";
+        //     }
+        // }
+        // else if (email == null || email == "") {
+        //     // this.setState({
+        //     //     isFormValid: false,
+        //     //     message: "Email cannot be empty!"
+        //     // });
+        //     isFormValid1= false;
+        //     message1=  "Email cannot be empty!";
+        //     console.log(message1);
+        //
+        // }
+        // else if (typeof email !== "undefined") {
+        //     // var reg = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+        //     if (!email.match(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/)) {
+        //         // this.setState({
+        //         //     isFormValid: false,
+        //         //     message: "Invalid Email Address!"
+        //         // });
+        //         isFormValid1= false;
+        //         message1=  "Invalid Email Address!";
+        //         console.log(message1);
+        //     }
+        // }
+        //  else if (password == null || password == "") {
+        //      // this.setState({
+        //      //     isFormValid: false,
+        //      //     message: "Password cannot be empty!"
+        //      // });
+        //     isFormValid1= false;
+        //     message1=  "Password cannot be empty!";
+        //     console.log(message1);
+        //  }
+        //  else if (password.length<5) {
+        //      // this.setState({
+        //      //     isFormValid: false,
+        //      //     message: "Password cannot be empty!"
+        //      // });
+        //     isFormValid1= false;
+        //     message1=  "Password too short!";
+        //     console.log(message1);
+        //  }
+         else
+         {
+             console.log("Else executed");
+             // this.setState({
+             //     isFormValid: true,
+             //     message: ""
+             // });
+             isFormValid1= true;
+             message1=  "";
+             console.log(message1);
+
+
+         }
+         console.log("j88888888888" + message1+ isFormValid1);
+         this.setState({
+             message: message1,
+            isFormValid: isFormValid1
+         },()=> {console.log("j8888888888811111" + this.state.message+ this.state.isFormValid)});
+
+    }
     render() {
         return (
             <div>
@@ -74,17 +218,22 @@ class SignUp extends Component {
                                                         <input className="text-input-input autofocus" type="password" name="login_password" id="pyxl8995788599097555052" placeholder="Password" onChange={event=>{this.setState({password:event.target.value});}}/>
                                                     </div>
                                                     <div className="clearfix">
-                                                        <button type="submit" className="login-button button-primary" onClick={()=>this.props.handleSignup(this.state)}><div className="sign-in-text">Create an account</div><div className="sso-text">Continue</div></button>                                    </div>
+                                                        <button type="submit" className="login-button button-primary" onClick={()=>this.handleSignup(this.state)}><div className="sign-in-text">Create an account</div><div className="sso-text">Continue</div></button>                                    </div>
                                                 </div>
                                                 <div className="hr-label"><span className="hr-label__text">or</span></div>
                                                 <div className="auth-google button-primary">
                                                     <div className="sign-in-text">Sign in with Google</div>
+                                                </div>
+                                                <div>
+
                                                 </div>
 
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <span>{this.state.message}</span>
+                                {/*<Message message={this.state.message}/>*/}
                             </div>
                         </div>
                     </div>
@@ -175,4 +324,4 @@ class SignUp extends Component {
     }
 }
 
-export default SignUp;
+export default withRouter(SignUp);

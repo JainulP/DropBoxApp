@@ -6,6 +6,8 @@ var mysql = require('./mysql');
 var mkdirp = require('mkdirp');
 const del = require('del');
 var currentUser;
+var currentUserfirstname = "";
+var currentuserlastname = "";
 var dateTime = require('node-datetime');
 var dt = dateTime.create();
 dt.format('m/d/Y H:M:S');
@@ -51,7 +53,15 @@ router.post('/doLogin', function (req, res, next) {
         {
             if(results.length > 0){
                 console.log(JSON.stringify(results));
+                currentUserfirstname = results["firstname"];
+                currentuserlastname = results["lastname"];
+                console.log("fname   "+ currentUserfirstname);
+                console.log("lname   "+ currentuserlastname);
                 return res.status(201).send();
+            }
+            else
+            {
+                return res.status(401).send();
             }
         }
     },getUsers);
@@ -147,6 +157,11 @@ router.get('/files', function (req, res, next) {
                 return res.status(200).send(JSON.stringify(resArr));
 
             }
+            else
+            {
+                return res.status(200).end(JSON.stringify(resArr));
+
+            }
         }
 
     },getallfiles);
@@ -156,7 +171,7 @@ router.get('/files', function (req, res, next) {
 router.get('/sharedfiles', function (req, res,next) {
 
     var resArr = [];
-    var getsharedfiles = "select * from userfiles where sharedwith = 'yogesh.chauhan@gmail.com'";
+    var getsharedfiles = "select * from userfiles where sharedwith = '"+ currentUser+"';";
     console.log("getsharedfiles"+ getsharedfiles);
 
     mysql.fetchData(function(err,results){
@@ -172,7 +187,7 @@ router.get('/sharedfiles', function (req, res,next) {
 
                     var fileJSON = {};
                     var resJSON = JSON.stringify(results[i]);
-                    fileJSON.filename = "S"+JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
+                    fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
                     fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
                     console.log("filename1", fileJSON.filename1);
                     if(fileJSON.filename1 == undefined) {
@@ -189,7 +204,12 @@ router.get('/sharedfiles', function (req, res,next) {
                 return res.status(200).send(JSON.stringify(resArr));
 
             }
+            else
+            {
+                return res.status(200).end(JSON.stringify(resArr));
+            }
         }
+
 
     },getsharedfiles);
 
@@ -330,24 +350,50 @@ router.post('/makedir', function (req,res) {
 router.post('/shareDirectory', function (req, res, next) {
     console.log("In shared directory"+req.body.shareDirectoryPath);
     console.log("shared file with"+req.body.shareWith);
-    var arraySharedWith = req.body.shareWith.split(",");
-    for(var index =0; index < arraySharedWith.length; index++)
-    {
-        var shareDirectory = "Insert into userfiles(username,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" + req.body.shareDirectoryPath+ "','"+ req.body.isDir + "','" + arraySharedWith[index]+ "');";
-        //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
-        console.log("shareDirectory"+ shareDirectory);
-        mysql.putData(function(err,results){
-            if(err){
-                throw err;
-            }
-            else
-            {
+    console.log("shared file via"+req.body.shareType);
+    var arraySharedwithUsername = req.body.shareWith.trim().split(",");
+    if(req.body.shareType == "email"){
+        var arraySharedWithemail = req.body.shareWith.split(",");
+        for(var index =0; index < arraySharedWithemail.length; index++)
+        {
+            var shareDirectory = "Insert into userfiles(username,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" + req.body.shareDirectoryPath+ "','"+ req.body.isDir + "','" + arraySharedWithemail[index]+ "');";
+            //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
+            console.log("shareDirectory"+ shareDirectory);
+            mysql.putData(function(err,results){
+                if(err){
+                    throw err;
+                }
+                else
+                {
 
-                console.log(JSON.stringify(results));
-                //res.send("Success");
-                res.status(204).end();
-            }
-        },shareDirectory);
+                    console.log(JSON.stringify(results));
+                    //res.send("Success");
+                    res.status(204).end();
+                }
+            },shareDirectory);
+        }
+    }
+    else if(req.body.shareType == "username")
+    {
+        var arraySharedwithUsername = req.body.shareWith.trim().split(",");
+        for(var index =0; index < arraySharedwithUsername.length; index++)
+        {
+            var shareDirectory = "Insert into userfiles(username,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" + req.body.shareDirectoryPath+ "','"+ req.body.isDir + "','" + arraySharedwithUsername[index]+ "');";
+            //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
+            console.log("shareDirectory"+ shareDirectory);
+            mysql.putData(function(err,results){
+                if(err){
+                    throw err;
+                }
+                else
+                {
+
+                    console.log(JSON.stringify(results));
+                    //res.send("Success");
+                    res.status(204).end();
+                }
+            },shareDirectory);
+        }
     }
 
 
@@ -476,6 +522,11 @@ router.get('/getfilesUnderDir', function (req, res, next) {
                 return res.status(200).send(JSON.stringify(resArr));
 
             }
+            else
+            {
+                return res.status(200).end(JSON.stringify(resArr));
+
+            }
         }
 
     },getallfilesUnderDirectory);
@@ -487,11 +538,51 @@ router.get('/setLoggedInUser', function (req, res, next) {
     if(req.query.username != null)
     {
         currentUser = req.query.username;
-        req.session.username = currentUser;
-        console.log("session username",req.session.username);
+        if(req.session != null) {
+            req.session.username = currentUser;
+            console.log("session username", req.session.username);
+        }
         return res.status(200);
     }
 
+});
+
+router.get('/getFileUnderDir', function (req, res,next) {
+
+    var resArr = [];
+    var getfilesUnderDir = "select * from userfiles where filedirectorypath like '"+ req.query.dirPath+ "/%';";
+    console.log("getfilesUnderDir"+ getfilesUnderDir);
+
+    mysql.fetchData(function(err,results){
+        if(err){
+            console.log("file under dir erro" +err);
+            throw err;
+        }
+        else {
+            if (results.length > 0) {
+                console.log("results of file under dir"+JSON.stringify(results));
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var fileJSON = {};
+                    var resJSON = JSON.stringify(results[i]);
+                    fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
+                    fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
+                    fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
+                    fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
+                    fileJSON.cols = 2;
+                    resArr.push(fileJSON);
+
+                }
+                return res.status(200).send(JSON.stringify(resArr));
+            }
+            else
+            {
+                return res.status(200).end(JSON.stringify(resArr));
+
+            }
+        }
+    },getfilesUnderDir);
 });
 
 module.exports = router;

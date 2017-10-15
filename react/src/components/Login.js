@@ -15,6 +15,7 @@ class Login extends Component {
     };
 
     componentWillMount() {
+        document.title = `Login - Dropbox`;
         this.setState({
             username: "",
             password: ""
@@ -25,6 +26,7 @@ class Login extends Component {
             this.props.history.push("/home");
         }
     }
+
 
     render() {
         return (

@@ -5,6 +5,7 @@
     top: 102px;
     float: right;
 }
+
 .home-access-sections {
     width: 100%;
     margin: 0;
@@ -72,4 +73,17 @@
     min-width: 420px;
     margin-left: 40px;
     width: 70%;
+}
+.maestro-app-content-activites {
+    z-index: 5;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    white-space: nowrap;
+    width: calc(100% - (200px + 2 * 40px));
+    min-width: 744px;
+    background: #fff;
+    padding: 0 0 0 40px;
+    height: 56px;
 }

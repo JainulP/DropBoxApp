@@ -183,10 +183,20 @@ export const doMakeDir = (payload) =>
 //         });
 
 export const setLoggedInUser = (username) =>
-fetch(`${api}/users/setLoggedInUser?username=`+username,{
-}).then(res => {
+fetch(`${api}/users/setLoggedInUser?username=`+username).then(res => {
     return res.status;
 }).catch(error => {
     console.log("This is error");
     return error;
 });
+
+export const getFileUnderDir = (dirPath) =>
+fetch(`${api}/users/getFileUnderDir?dirPath=`+dirPath)
+    .then(res => {
+        //console.log("response"+res.body);
+        return res.json();
+    })
+    .catch(error => {
+        console.log("This is error.");
+        return error;
+    });

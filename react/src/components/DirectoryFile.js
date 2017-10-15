@@ -7,16 +7,16 @@ import ImageGridList from "./ImageGridList";
 import {Popover} from "react-bootstrap";
 import {Tooltip} from "react-bootstrap";
 import { withRouter } from 'react-router-dom';
-
 import '.././CSS/homePage.css';
 
 // import {DatePicker,RaisedButton,action} from 'material-ui';
 
-class HomePage extends Component{
+class DirectoryFile extends Component{
 
     static propTypes = {
-        username: PropTypes.string,
-        // handleLogout: PropTypes.func,
+       // username: PropTypes.string,
+        //handleLogout: PropTypes.func,
+
     };
 
     constructor() {
@@ -144,51 +144,30 @@ class HomePage extends Component{
                 .then((status) => {
                     this.props.history.push("/home");
                 });
-
-            API.getImages()
-                .then((data) => {console.log("initial images"+data);
-                    if (this.refs.myref) {
-                        this.setState({
-                            files: data
-                        });
-                    }
-                });
-
-
-            API.getSharedFiles()
-                .then((data) => {
-                    console.log("shareeed data is "+data);
-                    if (this.refs.myref) {
-                        this.setState({
-                            sharedfiles: data
-                        });
-                    }
-                });
         }
-
     };
 
     componentDidMount() {
-        document.title = `Home - Dropbox`;
-        // API.getImages()
-        //     .then((data) => {console.log("initial images"+data);
-        //         if (this.refs.myref) {
-        //             this.setState({
-        //                 files: data
-        //             });
-        //         }
-        //     });
-        //
-        //
-        // API.getSharedFiles()
-        //     .then((data) => {
-        //         console.log("shareeed data is "+data);
-        //         if (this.refs.myref) {
-        //             this.setState({
-        //                 sharedfiles: data
-        //             });
-        //         }
-        //     });
+        document.title = `Welcome, ${this.state.username} !!`;
+        API.getImages()
+            .then((data) => {console.log("initial images"+data);
+                if (this.refs.myref) {
+                    this.setState({
+                        files: data
+                    });
+                }
+            });
+
+
+        API.getSharedFiles()
+            .then((data) => {
+                console.log("shareeed data is "+data);
+                if (this.refs.myref) {
+                    this.setState({
+                        sharedfiles: data
+                    });
+                }
+            });
     };
 
     render() {
@@ -203,8 +182,9 @@ class HomePage extends Component{
             </Tooltip>
         );
         return (
+
+
             <div className="main-wrapper" ref="myref">
-                <title>Home</title>
                 <NavigationBar></NavigationBar>
                 <HomePageHeader></HomePageHeader>
                 //logic of all list
@@ -214,59 +194,15 @@ class HomePage extends Component{
                             <li className="home-access-section">
                                 <h2 className="home-access-section__header"><div className="home-access-section__title"><div className="home-access-section__title-text"><div className="ue-effect-container">Shared with me</div></div></div></h2>
                             </li>
-                            <li>
-                                <ImageGridList files={this.state.sharedfiles} handleStar = {this.handleStar}  handleDelete = {this.handleDelete}/>
-                            </li>
-                            <li>
-
-                            </li>
                             <li className="home-access-section">
                                 <h2 className="home-access-section__header"><div className="home-access-section__title"><div className="home-access-section__title-text"><div className="ue-effect-container">My files</div></div></div></h2>
                             </li>
                             <li>
-                                <ImageGridList files={this.state.files} handleStar = {this.handleStar} handleDelete = {this.handleDelete}/>
+                                <ImageGridList files={this.props.filesUnderDir} handleStar = {this.handleStar} handleDelete = {this.handleDelete}/>
                             </li>
                         </ul>
                     </div>
-                    {/*<div className="maestro-app-content">*/}
-                        {/*<ul className="home-access-sections">*/}
-                            {/*<li className="home-access-section">*/}
-                                {/*<h2 className="home-access-section__header"><div className="home-access-section__title"><div className="home-access-section__title-text"><div className="ue-effect-container">My</div></div></div></h2>*/}
-                            {/*</li>*/}
-                            {/*<li>*/}
-                                {/*<ImageGridList images={this.state.images}/>*/}
-                            {/*</li>*/}
-                        {/*</ul>*/}
-                    {/*</div>*/}
                     <div className="right-section-nav">
-                        <div className="form-group">
-                            <input
-                                className="form-control"
-                                type="text"
-                                label="createdir"
-                                placeholder="folder name"
-                                value={this.state.dirName}
-                                onChange={event => {
-                                    this.setState({
-                                        dirName: event.target.value
-                                    });
-                                }} />
-                        </div>
-
-                        <div className="form-group">
-                            <button
-                                className="btn btn-primary"
-                                type="button"
-                                onClick={(event) => {
-                                    this.setState({
-                                        isDir: true
-                                    }, () => this.handleMakeDir(this.state));
-                                }}
-                            >
-                                Create Folder
-                            </button>
-                        </div>
-
                         <input
                             className={'fileupload'}
                             type="file"
@@ -294,4 +230,4 @@ class HomePage extends Component{
     }
 }
 
-export default withRouter(HomePage);
+export default withRouter(DirectoryFile);
