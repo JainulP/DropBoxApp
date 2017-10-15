@@ -47,11 +47,11 @@ export const toggleStar = (payload) =>
         },
         body: JSON.stringify(payload)
     }).then(res => {
-        console.log(res);
+        console.log("Star response::::"+res);
         return res.status;
     })
         .catch(error => {
-            console.log("This is error");
+            console.log("Star response:::: This is error");
             return error;
         });
 

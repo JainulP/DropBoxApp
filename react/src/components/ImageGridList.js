@@ -31,6 +31,8 @@ class ImageGridList extends Component {
 
     static propTypes = {
         classes: PropTypes.object,
+        handleStar: PropTypes.func.isRequired,
+        handleDelete: PropTypes.func.isRequired
         //files: PropTypes.object
     };
 
@@ -49,9 +51,6 @@ class ImageGridList extends Component {
 
     handleFileUploadUnderDir = (event1,param) => {
         const payload = new FormData();
-
-        // console.log("Event*************************"+event1);
-        // console.log("Upload under directory"+JSON.stringify(event1.target.files[0]));
         payload.append('mypic', event1.target.files[0]);
 
         console.log(payload);
@@ -102,39 +101,39 @@ class ImageGridList extends Component {
         //shareDirectoryPath: path
     };
 
-    handleDelete = (event,param) => {
+    // handleDelete = (event,param) => {
+    //
+    //     API.deleteIt(param)
+    //         .then((status) => {
+    //         console.log("delete executed" + status);
+    //
+    //             API.getImages()
+    //                 .then((data) => {
+    //                     this.setState({
+    //                         files: data
+    //                     });
+    //                 });
+    //
+    //         });
+    //
+    // };
 
-        API.deleteIt(param)
-            .then((status) => {
-            console.log("delete executed" + status);
-
-                API.getImages()
-                    .then((data) => {
-                        this.setState({
-                            files: data
-                        });
-                    });
-
-            });
-
-    };
-
-    handleStar = (payload) => {
- console.log("Handle Star"+JSON.stringify(payload));
-        API.toggleStar(payload)
-            .then((status) => {
-                console.log("star executed" + status);
-
-                // API.getImages()
-                //     .then((data) => {
-                //         this.setState({
-                //             files: data
-                //         });
-                //     });
-
-            });
-
-    };
+ //    handleStar = (payload) => {
+ // console.log("Handle Star"+JSON.stringify(payload));
+ //        API.toggleStar(payload)
+ //            .then((status) => {
+ //                console.log("star executed" + status);
+ //
+ //                API.getImages()
+ //                    .then((data) => {
+ //                        this.setState({
+ //                            files: data
+ //                        });
+ //                    });
+ //
+ //            });
+ //
+ //    };
 
     componentDidMount() {
         API.getImages()
@@ -154,11 +153,14 @@ class ImageGridList extends Component {
             <div className={classes.root}>
                 <table className={classes.gridList} cols={10}>
                     {this.props.files.map(file => (
+                        <tbody>
+
+                        {/*<span>{file.filename+file.filename1}</span>*/}
                         <tr key={file.filename} className="home-file-section">
                             <td>
                                 <svg width="40" height="40" viewBox="0 0 40 40">
                                     <title>content-folder-small</title>
-                                    <g fill="none" fill-rule="evenodd">
+                                    <g fill="none" fillRule="evenodd">
                                         <path
                                             d="M18.422 11h15.07c.84 0 1.508.669 1.508 1.493v18.014c0 .818-.675 1.493-1.508 1.493H6.508C5.668 32 5 31.331 5 30.507V9.493C5 8.663 5.671 8 6.5 8h7.805c.564 0 1.229.387 1.502.865l1.015 1.777s.4.358 1.6.358z"
                                             fill="#71B9F4"
@@ -176,14 +178,14 @@ class ImageGridList extends Component {
                                 <button
                                     className="btn button-tertiary star-button"
                                     type="button"
-                                    style={file.isDir == "true" ? {} : { display: "none" }}
+                                    style={(file.isDir == "true"&& file.isStarred== "false") ? {} : { display: "none" }}
                                     onClick={event => {
                                         this.setState(
                                             {
                                                 shareDirectoryPath: file.filepath,
-                                                isStarred: file.isStarred == "true" ? "false" : "true"
+                                                isStarred: file.isStarred == "false" ? "true" : "false"
                                             },
-                                            () => this.handleStar(this.state)
+                                            () => this.props.handleStar(this.state)
                                         );
                                     }}
                                 >
@@ -191,12 +193,12 @@ class ImageGridList extends Component {
                                         width="32"
                                         height="32"
                                         viewBox="0 0 32 32"
-                                        class="mc-icon-star"
+                                        className="mc-icon-star"
                                     >
                                         <title>Artboard</title>
                                         <path
                                             d="M20.944 23.717L16 20.949l-4.944 2.768 1.104-5.558L8 14.312l5.627-.667L16 8.5l2.373 5.145 5.627.667-4.16 3.847 1.104 5.558zM17.66 17.45l1.799-1.663-2.433-.289L16 13.275l-1.026 2.224-2.433.289 1.799 1.663-.478 2.403L16 18.657l2.138 1.197-.478-2.403z"
-                                            fill-rule="nonzero"
+                                            fillRule="nonzero"
                                             fill="#0070E0"
                                         />
                                     </svg>
@@ -206,14 +208,14 @@ class ImageGridList extends Component {
                                 <button
                                     className="btn button-tertiary star-button"
                                     type="button"
-                                    style={file.isDir == "true" ? {} : { display: "none" }}
+                                    style={(file.isDir == "true"&& file.isStarred== "true") ? {} : { display: "none" }}
                                     onClick={event => {
                                         this.setState(
                                             {
                                                 shareDirectoryPath: file.filepath,
                                                 isStarred: file.isStarred == "true" ? "false" : "true"
                                             },
-                                            () => this.handleStar(this.state)
+                                            () => this.props.handleStar(this.state)
                                         );
                                     }}
                                 >
@@ -221,12 +223,12 @@ class ImageGridList extends Component {
                                         width="32"
                                         height="32"
                                         viewBox="0 0 32 32"
-                                        class="mc-icon-star mc-icon-star-selected"
+                                        className="mc-icon-star mc-icon-star-selected"
                                     >
                                         <title>Artboard</title>
                                         <path
                                             d="M16 20.95l-4.944 2.767 1.104-5.558L8 14.312l5.627-.667L16 8.5l2.373 5.145 5.627.667-4.16 3.847 1.104 5.558z"
-                                            fill-rule="nonzero"
+                                            fillRule="nonzero"
                                             fill="#0070E0"
                                         />
                                     </svg>
@@ -250,7 +252,7 @@ class ImageGridList extends Component {
                                     className="btn btn-sm btn-primary button-tertiary"
                                     type="button"
                                     style={file.isDir == "true" ? {} : { display: "none" }}
-                                    onClick={event => this.handleDelete(event, file.filename)}
+                                    onClick={event => this.props.handleDelete(event, file.filename)}
                                 >
                                     Delete
                                 </button>
@@ -317,6 +319,7 @@ class ImageGridList extends Component {
                                 </div>
                             </td>
                         </tr>
+                        </tbody>
                     ))}
                 </table>
             </div>

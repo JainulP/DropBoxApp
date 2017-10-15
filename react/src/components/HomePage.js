@@ -62,6 +62,39 @@ class HomePage extends Component{
 
     };
 
+    handleStar = (payload) => {
+        console.log("Handle Star"+JSON.stringify(payload));
+        API.toggleStar(payload)
+            .then((status) => {
+                console.log("star executed" + status);
+
+                API.getImages()
+                    .then((data) => {
+                        this.setState({
+                            files: data
+                        });
+                    });
+
+            });
+
+    };
+
+    handleDelete = (event,param) => {
+
+        API.deleteIt(param)
+            .then((status) => {
+                console.log("delete executed" + status);
+
+                API.getImages()
+                    .then((data) => {
+                        this.setState({
+                            files: data
+                        });
+                    });
+
+            });
+
+    };
 
     handleMakeDir = (data) => {
         API.doMakeDir(data)
@@ -77,24 +110,6 @@ class HomePage extends Component{
             });
     };
 
-    // handleCreateGroup = (data) => {
-    //     API.doCreateGroup(data)
-    //         .then((status) => {
-    //             // if (status === 201) {
-    //             //     this.setState({
-    //             //         isLoggedIn: true,
-    //             //         message: "Welcome to my App..!!",
-    //             //         username: userdata.username
-    //             //     });
-    //             //     this.props.history.push("/welcome");
-    //             // } else if (status === 401) {
-    //             //     this.setState({
-    //             //         isLoggedIn: false,
-    //             //         message: "Wrong username or password. Try again..!!"
-    //             //     });
-    //             // }
-    //         });
-    // };
 
     handleFileUploadUnderDir = (event) => {
         const payload = new FormData();
@@ -178,7 +193,7 @@ class HomePage extends Component{
                                 <h2 className="home-access-section__header"><div className="home-access-section__title"><div className="home-access-section__title-text"><div className="ue-effect-container">Shared with me</div></div></div></h2>
                             </li>
                             <li>
-                                <ImageGridList files={this.state.sharedfiles}/>
+                                <ImageGridList files={this.state.sharedfiles} handleStar = {this.handleStar}  handleDelete = {this.handleDelete}/>
                             </li>
                             <li>
 
@@ -187,7 +202,7 @@ class HomePage extends Component{
                                 <h2 className="home-access-section__header"><div className="home-access-section__title"><div className="home-access-section__title-text"><div className="ue-effect-container">My files</div></div></div></h2>
                             </li>
                             <li>
-                                <ImageGridList files={this.state.files}/>
+                                <ImageGridList files={this.state.files} handleStar = {this.handleStar} handleDelete = {this.handleDelete}/>
                             </li>
                         </ul>
                     </div>

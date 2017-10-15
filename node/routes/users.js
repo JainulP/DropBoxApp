@@ -127,7 +127,7 @@ router.get('/files', function (req, res, next) {
     // });
 
     var resArr = [];
-    var getallfiles = "select filedirectorypath,isDirectory,isStarred from userfiles where username = '"+ currentUser+"'";
+    var getallfiles = "select distinct filedirectorypath,isDirectory,isStarred from userfiles where username = '"+ currentUser+"'";
     console.log("getallfiles"+ getallfiles);
 
     mysql.fetchData(function(err,results){
@@ -144,12 +144,15 @@ router.get('/files', function (req, res, next) {
                     var fileJSON = {};
                     var resJSON = JSON.stringify(results[i]);
                     fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
-                    fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
-                    fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
-                    fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
-                    fileJSON.cols = 2  ;
+                    fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
+                    if(fileJSON.filename1 == undefined) {
+                        fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
+                        fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
+                        fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
+                        fileJSON.cols = 2;
 
-                    resArr.push(fileJSON);
+                        resArr.push(fileJSON);
+                    }
                 }
 
                 return res.status(200).send(JSON.stringify(resArr));
@@ -180,13 +183,18 @@ router.get('/sharedfiles', function (req, res,next) {
 
                     var fileJSON = {};
                     var resJSON = JSON.stringify(results[i]);
-                    fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
-                    fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
-                    fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
-                    fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
-                    fileJSON.cols = 2  ;
+                    fileJSON.filename = "S"+JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
+                    fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
+                    console.log("filename1", fileJSON.filename1);
+                    if(fileJSON.filename1 == undefined) {
+                        fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
+                        fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
+                        fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
+                        fileJSON.cols = 2;
 
-                    resArr.push(fileJSON);
+                        resArr.push(fileJSON);
+                    }
+
                 }
 
                 return res.status(200).send(JSON.stringify(resArr));
@@ -423,12 +431,12 @@ router.post('/toggleStar', function (req, res) {
         {
             if(results.length > 0){
                 console.log(JSON.stringify(results));
-                res.send("Success");
+                res.status(204).end();
             }
         }
     },toggleStar);
 
-
+    res.status(204).end();
 });
 
 router.get('/getfilesUnderDir', function (req, res, next) {
