@@ -76,6 +76,7 @@ class Login extends Component {
                                 <div className="clearfix">
                                   <button type="submit" className="login-button button-primary" onClick={()=>this.props.handleLogin(this.state)}><div className="sign-in-text">Sign in</div><div className="sso-text">Continue</div></button>                                    </div>
                               </div>
+                                <span>{this.props.message}</span>
                             </div>
                           </div>
                         </div>

@@ -126,7 +126,7 @@ router.get('/files', function (req, res, next) {
     // });
 
     var resArr = [];
-    var getallfiles = "select distinct filedirectorypath,isDirectory,isStarred from userfiles where username = '"+ currentUser+"'";
+    var getallfiles = "select distinct username,filedirectorypath,isDirectory,isStarred from userfiles where username = '"+ currentUser+"' and sharedwith IS NULL ";
     console.log("getallfiles"+ getallfiles);
 
     mysql.fetchData(function(err,results){
@@ -144,6 +144,8 @@ router.get('/files', function (req, res, next) {
                     var resJSON = JSON.stringify(results[i]);
                     fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
                     fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
+                    fileJSON.fileowner = JSON.parse(resJSON)["username"];
+                    console.log("files owner" + fileJSON.fileowner);
                     if(fileJSON.filename1 == undefined) {
                         fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
                         fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
@@ -189,6 +191,7 @@ router.get('/sharedfiles', function (req, res,next) {
                     var resJSON = JSON.stringify(results[i]);
                     fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
                     fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
+                    fileJSON.fileowner = JSON.parse(resJSON)["username"];
                     console.log("filename1", fileJSON.filename1);
                     if(fileJSON.filename1 == undefined) {
                         fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
@@ -351,7 +354,18 @@ router.post('/shareDirectory', function (req, res, next) {
     console.log("In shared directory"+req.body.shareDirectoryPath);
     console.log("shared file with"+req.body.shareWith);
     console.log("shared file via"+req.body.shareType);
-    var arraySharedwithUsername = req.body.shareWith.trim().split(",");
+    console.log("shared file via"+req.body.isDir);
+    // var arraySharedwithUsername = req.body.shareWith.trim().split(",");
+    // var dirpathlength = req.body.shareDirectoryPath.split("/").length;
+    // var isDire = false;
+    // console.log("dirpathhhhhh"+dirpathlength);
+    // if(dirpathlength >3)
+    // {isDire = true}
+    // else
+    // {
+    //     isDire = false
+    // }
+
     if(req.body.shareType == "email"){
         var arraySharedWithemail = req.body.shareWith.split(",");
         for(var index =0; index < arraySharedWithemail.length; index++)
@@ -544,7 +558,7 @@ router.get('/setLoggedInUser', function (req, res, next) {
         }
         return res.status(200);
     }
-
+    return res.status(200);
 });
 
 router.get('/getFileUnderDir', function (req, res,next) {
@@ -583,6 +597,117 @@ router.get('/getFileUnderDir', function (req, res,next) {
             }
         }
     },getfilesUnderDir);
+});
+
+router.get('/getActivityReport', function (req, res, next) {
+    var resArr = [];
+
+    var getactivityreport = "select * from UserLifeEvents where UserName = '"+req.query.username+ "';";
+    console.log("getactivityreport"+ getactivityreport);
+    mysql.fetchData(function(err,results){
+        if(err){
+            throw err;
+        }
+        else
+        {
+            if(results.length > 0){
+                console.log("results of activity under dir"+JSON.stringify(results));
+                for (var i = 0; i < results.length; i++) {
+
+                    var activityJSON = {};
+                    console.log("res jsom"+ results[i]["events"]);
+                     activityJSON.event = results[i]["events"];
+                    activityJSON.time = results[i]["eventtime"];
+                    activityJSON.cols = 2;
+                    resArr.push(activityJSON);
+
+                }
+                return res.status(200).send(JSON.stringify(resArr));
+            }
+            else
+            {
+                return res.status(200).send(JSON.stringify(resArr));
+
+            }
+        }
+    },getactivityreport);
+
+});
+
+
+router.get('/getUserAbout', function (req, res, next) {
+    var resArr = [];
+
+    var getuserinfo = "select * from useraccount where username = '"+req.query.username+ "';";
+    console.log("getuserinfo"+ getuserinfo);
+    mysql.fetchData(function(err,results){
+        if(err){
+            throw err;
+        }
+        else
+        {
+            if(results.length > 0){
+                console.log("results of user infor"+JSON.stringify(results));
+                for (var i = 0; i < results.length; i++) {
+
+                    var userDetailJSON = {};
+                    console.log("res jsom"+ results[i]["overview"]);
+                    userDetailJSON.overview = results[i]["overview"];
+                    userDetailJSON.work = results[i]["work"];
+                    userDetailJSON.education = results[i]["education"];
+                    userDetailJSON.contactnumber = results[i]["contactnumber"];
+                    userDetailJSON.otheremail = results[i]["otheremail"];
+                    //activityJSON.cols = 2;
+                    resArr.push(userDetailJSON);
+
+                }
+                return res.status(200).send(JSON.stringify(resArr));
+            }
+            else
+            {
+                return res.status(200).send(JSON.stringify(resArr));
+
+            }
+        }
+    },getuserinfo);
+
+});
+
+
+router.get('/getUserInterests', function (req, res, next) {
+    var resArr = [];
+
+    var getuserinfo = "select * from userinterest where username = '"+req.query.username+ "';";
+    console.log("getuserinfo"+ getuserinfo);
+    mysql.fetchData(function(err,results){
+        if(err){
+            throw err;
+        }
+        else
+        {
+            if(results.length > 0){
+                console.log("results of user interst"+JSON.stringify(results));
+                for (var i = 0; i < results.length; i++) {
+
+                    var userinterestJSON = {};
+                    console.log("res jsom"+ results[i]["music"]);
+                    userinterestJSON.music = results[i]["music"];
+                    userinterestJSON.shows = results[i]["shows"];
+                    userinterestJSON.sports = results[i]["sports"];
+
+                    resArr.push(userinterestJSON);
+
+                }
+                return res.status(200).send(JSON.stringify(resArr));
+            }
+            else
+            {
+                return res.status(200).send(JSON.stringify(resArr));
+
+            }
+        }
+    },getuserinfo);
+
 });
 
 module.exports = router;

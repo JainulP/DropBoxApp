@@ -8,6 +8,8 @@ import SignUp from "./SignUp";
 import HomePage from "./HomePage";
 import activities from "./activities";
 import DirectoryFile from "./DirectoryFile";
+import About from "./About";
+import Interests from "./Interests";
 
 class NewerHomePage extends Component {
 
@@ -20,23 +22,56 @@ class NewerHomePage extends Component {
 
 
     handleLogin = (userdata) => {
-        API.doLogin(userdata)
-            .then((status) => {
-                if (status === 201) {
-                    this.setState({
-                        isLoggedIn: true,
-                        // message: "Welcome to my App..!!",
-                        username: userdata.username
+
+        {
+            console.log("login clicked"+userdata.username);
+            if(userdata.username == null || userdata.username == "")
+            {
+                this.setState({
+                    isLoggedIn: false,
+                    message: "Please enter an email"
+                });
+            }
+            // else if(userdata.username != null || userdata.username != "")
+            // {
+            //     if (!userdata.username.match(/^[a-zA-Z]+$/)) {
+            //         this.setState({
+            //             isLoggedIn: false,
+            //             message: "Invalid email"
+            //         });
+            //     }
+            // }
+            else if(userdata.password == null || userdata.password == "")
+            {
+                this.setState({
+                    isLoggedIn: false,
+                    message: "Please enter password"
+                });
+            }
+
+            else
+            {
+                API.doLogin(userdata)
+                    .then((status) => {
+                        if (status === 201) {
+                            this.setState({
+                                isLoggedIn: true,
+                                // message: "Welcome to my App..!!",
+                                username: userdata.username
+                            }, ()=> {localStorage.setItem("username",this.state.username);
+                                this.props.history.push("/home");});
+                            // localStorage.setItem("username",this.state.username);
+                            // this.props.history.push("/home");
+                        } else if (status === 401) {
+                            this.setState({
+                                isLoggedIn: false,
+                                message: "Wrong username or password. Try again..!!"
+                            });
+                        }
                     });
-                    localStorage.setItem("username",this.state.username);
-                    this.props.history.push("/home");
-                } else if (status === 401) {
-                    this.setState({
-                        isLoggedIn: false,
-                        message: "Wrong username or password. Try again..!!"
-                    });
-                }
-            });
+            }
+        }
+
     };
 
     // handleSignup = (userdata) => {
@@ -187,7 +222,7 @@ class NewerHomePage extends Component {
 
                 <Route exact path="/login" render={() => (
                     <div>
-                        <Login handleLogin={this.handleLogin}/>
+                        <Login handleLogin={this.handleLogin} message={this.state.message}/>
                         <Message message={this.state.message}/>
                     </div>
                 )}/>
@@ -201,8 +236,12 @@ class NewerHomePage extends Component {
                     {/*<Message message={this.state.message}/>*/}
                     </div>
                 )}/>
-                <Route exact path="/activities" render={() => (
-                    <activities/>
+                <Route exact path="/about" render={() => (
+                    <About/>
+                )}/>
+
+                <Route exact path="/interests" render={() => (
+                    <Interests/>
                 )}/>
                 <Route exact path="/home" render={() => (
 

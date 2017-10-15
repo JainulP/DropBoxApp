@@ -36,21 +36,21 @@ class NavigationBar extends Component{
                             <li data-reactid="26">
                                 <div className="maestro-nav__product-wrapper" data-reactid="27">
                   <span className="ue-effect-container" data-reactid="28">
-                     <a href="#" className="maestro-nav__product" id="paper" target="_self" rel="noopener" data-reactid="29">
+                     <a href="/about" className="maestro-nav__product" id="paper" target="_self" rel="noopener" data-reactid="29">
                        About
                      </a>
                   </span>
                                 </div>
                                 <div className="maestro-nav__product-wrapper" data-reactid="27">
                                     <span className="ue-effect-container" data-reactid="28">
-                     <a href="#" className="maestro-nav__product" id="paper" target="_self" rel="noopener" data-reactid="29">
+                     <a href="/interests" className="maestro-nav__product" id="paper" target="_self" rel="noopener" data-reactid="29">
                        Interest
                      </a>
                   </span>
                                 </div>
                                 <div className="maestro-nav__product-wrapper" data-reactid="27">
                                     <span className="ue-effect-container" data-reactid="28">
-                     <a href="/welcome" className="maestro-nav__product" id="paper" target="_self" rel="noopener" data-reactid="29">
+                     <a href="/activityreport" className="maestro-nav__product" id="paper" target="_self" rel="noopener" data-reactid="29">
                        Activity Report
                      </a>
                   </span>

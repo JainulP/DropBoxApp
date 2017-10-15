@@ -26,31 +26,111 @@ class SignUp extends Component {
             email:"",
             password:"",
             message:"",
-            isFormValid: false
+            isFormValid: false,
+            firstnamerr: "",
+            lastnameerr: "",
+            emailerr:"",
+            passworderr:""
         });
     }
 
     handleSignup = (userdata) => {
-        this.handleValidation(userdata);
-        console.log("form validity"+ this.state.isFormValid);
-        if(this.state.isFormValid || this.state.isFormValid == "true") {
-            API.doSignUp(userdata)
-                .then((status) => {
-                    if (status === 201) {
-                        this.setState({
-                            isLoggedIn: true,
-                            // message: "Welcome to my App..!!",
-                            username: userdata.username
-                        });
-                        this.props.history.push("/login");
-                    } else if (status === 401) {
-                        this.setState({
-                            isLoggedIn: false,
-                            message: "Wrong username or password. Try again..!!"
-                        });
-                    }
-                });
+        // handleValidation(userdata) {
+        //     console.log("Inside validation function" + userdata);
+        //     var firstname = (userdata)["firstname"];
+        //     var lastname = (userdata)["lastname"];
+        //     var email = (userdata)["email"];
+        //     var password = (userdata)["password"];
+        //     var message1;
+        //     var isFormValid1 = false;
+        //     console.log("Firstname is" + firstname);
+        //
+        //     if (firstname == null || firstname == "") {
+        //         // this.setState({
+        //         //     isFormValid: false,
+        //         //     message: "First name cannot be empty!"
+        //         // });
+        //         isFormValid1= false;
+        //         message1=  "First name cannot be empty!";
+        //         console.log(message1);
+        //     }
+        console.log("first"+userdata.firstname);
+        if (userdata.firstname == null || userdata.firstname == "") {
+            this.setState({
+                isFormValid: false,
+                firstnamerr: "First name cannot be empty!"
+            });
+            // isFormValid1= false;
+            // message1=  "First name cannot be empty!";
+            // console.log(message1);
         }
+        else if(userdata.lastname == null || userdata.lastname == ""){
+            this.setState({
+                isFormValid: false,
+                firstnamerr:"",
+                lastnameerr: "Last name cannot be empty!"
+            });
+        }
+        else if(userdata.email == null || userdata.email == ""){
+            this.setState({
+                isFormValid: false,
+                firstnamerr:"",
+                lastnameerr:"",
+                emailerr: "email cannot be empty!"
+            });
+        }
+        // else if(userdata.email != null || userdata.email != ""){
+        //     console.log("here");
+        //     if(!userdata.email.match("/^[a-zA-Z]+$/")) {
+        //         this.setState({
+        //             isFormValid: false,
+        //             firstnamerr: "",
+        //             lastnameerr: "",
+        //             emailerr: "Invalid Email!!"
+        //         });
+        //     }
+        // }
+        else if(userdata.password == null || userdata.password == ""){
+            this.setState({
+                isFormValid: false,
+                firstnamerr:"",
+                lastnameerr:"",
+                emailerr:"",
+                passworderr: "Password cannot be empty!"
+            });
+        }
+        else if(userdata.password.length<5){
+            this.setState({
+                isFormValid: false,
+                firstnamerr:"",
+                lastnameerr:"",
+                emailerr:"",
+                passworderr: "Password too short!!"
+            });
+        }
+        else {
+
+            console.log("form validity" + this.state.isFormValid);
+            // if (this.state.isFormValid || this.state.isFormValid == "true") {
+                API.doSignUp(userdata)
+                    .then((status) => {
+                        if (status === 201) {
+                            this.setState({
+                                isLoggedIn: true,
+                                 message: "!",
+                                username: userdata.username
+                            });
+                            this.props.history.push("/login");
+                        } else if (status === 401) {
+                            this.setState({
+                                isLoggedIn: false,
+                                message: "Wrong username or password. Try again..!!"
+                            });
+                        }
+                    });
+            }
+        //}
+
     };
 
     handleValidation(userdata) {
@@ -202,18 +282,23 @@ class SignUp extends Component {
                                                 {/*<div className="hr-label"><span className="hr-label__text">or</span></div>*/}
                                                 <div className="login-form-width">
                                                     <div className="dummy-height"></div>
+                                                    <font color="red"> <span>{this.state.firstnamerr}</span></font>
+
                                                     <div className="text-input-wrapper">
                                                         <input className="text-input-input autofocus" type="text" name="login_firstname" id="pyxl8995788599097555052" placeholder="First name" onChange={event=>{this.setState({firstname:event.target.value});}}/>
                                                     </div>
                                                     <div className="dummy-height"></div>
+                                                    <font color="red"> <span>{this.state.lastnameerr}</span></font>
                                                     <div className="text-input-wrapper">
                                                         <input className="text-input-input autofocus" type="text" name="login_lastname" id="pyxl8995788599097555052" placeholder="Last name" onChange={event=>{this.setState({lastname:event.target.value});}}/>
                                                     </div>
                                                     <div className="dummy-height"></div>
+                                                    <font color="red"> <span>{this.state.emailerr}</span></font>
                                                     <div className="text-input-wrapper">
                                                         <input className="text-input-input autofocus" type="email" name="login_email" id="pyxl8995788599097555052" placeholder="Email" onChange={event=>{this.setState({email:event.target.value});}}/>
                                                     </div>
                                                     <div className="dummy-height"></div>
+                                                    <font color="red"> <span>{this.state.passworderr}</span></font>
                                                     <div className="text-input-wrapper">
                                                         <input className="text-input-input autofocus" type="password" name="login_password" id="pyxl8995788599097555052" placeholder="Password" onChange={event=>{this.setState({password:event.target.value});}}/>
                                                     </div>
@@ -232,7 +317,7 @@ class SignUp extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <span>{this.state.message}</span>
+
                                 {/*<Message message={this.state.message}/>*/}
                             </div>
                         </div>

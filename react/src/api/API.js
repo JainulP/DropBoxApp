@@ -200,3 +200,35 @@ fetch(`${api}/users/getFileUnderDir?dirPath=`+dirPath)
         console.log("This is error.");
         return error;
     });
+export const getActivityReport = (username) =>
+    fetch(`${api}/users/getActivityReport?username=`+username)
+        .then(res => {
+            //console.log("response"+res.body);
+            return res.json();
+        })
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+export const getUserAbout = (username) =>
+    fetch(`${api}/users/getUserAbout?username=`+username)
+        .then(res => {
+            //console.log("response"+res.body);
+            return res.json();
+        })
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+export const getUserInterests = (username) =>
+    fetch(`${api}/users/getUserInterests?username=`+username)
+        .then(res => {
+            //console.log("response"+res.body);
+            return res.json();
+        })
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });

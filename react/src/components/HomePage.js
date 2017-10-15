@@ -36,6 +36,9 @@ class HomePage extends Component{
     handleLogout = (event) => {
         console.log("handle log out called");
         localStorage.clear();
+        this.setState({
+            username: ""
+        });
         console.log("afterlogout"+localStorage.getItem("username"));
         API.logout()
             .then((status) => {
@@ -206,7 +209,7 @@ class HomePage extends Component{
             <div className="main-wrapper" ref="myref">
                 <title>Home</title>
                 <NavigationBar></NavigationBar>
-                <HomePageHeader></HomePageHeader>
+                <HomePageHeader head = {"Home"} ></HomePageHeader>
                 //logic of all list
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content">
