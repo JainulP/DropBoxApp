@@ -51,7 +51,7 @@ export const toggleStar = (payload) =>
         return res.status;
     })
         .catch(error => {
-            console.log("Star response:::: This is error");
+            console.log("Star response::::This is error");
             return error;
         });
 

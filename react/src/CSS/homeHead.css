@@ -10,6 +10,27 @@
 {
     text-align: left;
     padding-left: 10px;
+    width: 25%;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+.download_click {
+
+}
+.folder-icon{
+    width: 10%;
+}
+.file-list-table
+{
+    width: 95%;
+}
+.download-link
+{
+    width: 30%;
+    text-align: center;
+}
+.delete-button
+{
+    width: 20%;
 }
 .page-header {
     z-index: 5;

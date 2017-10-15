@@ -12,27 +12,15 @@ dt.format('m/d/Y H:M:S');
 console.log(new Date(dt.now()));
 var shared = [];
 
-// var users = [
-//     {
-//         username: "Mike",
-//         password: "mike123"
-//     },
-//     {
-//         username: "Tom",
-//         password: "tom123"
-//     },
-//     {
-//         username: "John",
-//         password: "john123"
-//     },
-//     {
-//         username: "Mac",
-//         password: "mac123"
-//     }
-// ];
+var Cryptr = require('cryptr'),
+    cryptr = new Cryptr('myTotalySecretKey');
 
 
-/* GET users listing. */
+// var encryptedString = cryptr.encrypt('bacon'),
+//     decryptedString = cryptr.decrypt(encryptedString);
+//
+// console.log(encryptedString);  // d7233809c0
+// console.log(decryptedString);  // bacon
 
 
 // router.get('/check',function (req,res) {
@@ -52,8 +40,8 @@ router.post('/doLogin', function (req, res, next) {
     req.session.username = username;
     console.log("Session initialized");
     //req.session.userss = "hello";
-    console.log(req.session.username);
-    var getUsers = "select * from UserData where UserName = '"+req.body.username+"' and Password = '" + req.body.password + "';";
+    console.log("Decrypted Password"+cryptr.encrypt(req.body.password));
+    var getUsers = "select * from UserData where UserName = '"+req.body.username+"' and Password = '" + cryptr.encrypt(req.body.password) + "';";
     console.log("getAllUsers"+ getUsers);
     mysql.fetchData(function(err,results){
         if(err){
@@ -73,7 +61,8 @@ router.post('/doLogin', function (req, res, next) {
 });
 router.post('/doSignUp', function (req, res, next) {
    // console.log("session username: "+ req.session.username);
-     var putUser = "Insert into UserData(UserName,firstname,lastname,password) values('"+req.body.email+"','"+req.body.firstname+"','"+ req.body.lastname +"','"+ req.body.password + "');";
+    console.log("Encrypted Password"+cryptr.encrypt(req.body.password));
+     var putUser = "Insert into UserData(UserName,firstname,lastname,password) values('"+req.body.email+"','"+req.body.firstname+"','"+ req.body.lastname +"','"+ cryptr.encrypt(req.body.password) + "');";
     console.log("putuser"+ putUser);
     mysql.putData(function(err,results){
         if(err){
@@ -303,7 +292,7 @@ router.post('/makedir', function (req,res) {
     mkdirp('./public/uploads/'+req.body.dirName , function (err) {
         if(!err) {
             console.log("No error");
-            var putuserfiledata = "Insert into userfiles(username,filedirectorypath,isDirectory,isStarred) values('"+currentUser+"','" +"public/uploads/"+req.body.dirName+"','" + req.body.isDir + "', 'false'"+ "');";
+            var putuserfiledata = "Insert into userfiles(username,filedirectorypath,isDirectory,isStarred) values('"+currentUser+"','" +"public/uploads/"+req.body.dirName+"','" + req.body.isDir + "', 'false'"+ ");";
             console.log("putuserfiledata"+ putuserfiledata);
             mysql.putData(function(err,results){
                 if(err){

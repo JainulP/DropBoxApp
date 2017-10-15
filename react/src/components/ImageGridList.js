@@ -151,13 +151,13 @@ class ImageGridList extends Component {
 
         return (
             <div className={classes.root}>
-                <table className={classes.gridList} cols={10}>
+                <table className="file-list-table" cols={10}>
                     {this.props.files.map(file => (
                         <tbody>
 
                         {/*<span>{file.filename+file.filename1}</span>*/}
                         <tr key={file.filename} className="home-file-section">
-                            <td>
+                            <td className="folder-icon">
                                 <svg width="40" height="40" viewBox="0 0 40 40">
                                     <title>content-folder-small</title>
                                     <g fill="none" fillRule="evenodd">
@@ -173,7 +173,7 @@ class ImageGridList extends Component {
                                 </svg>
                             </td>
                             <td className="fileName">{file.filename}</td>
-                            <td>
+                            <td  className="folder-icon">
                                 {/*show below button if star not clicked*/}
                                 <button
                                     className="btn button-tertiary star-button"
@@ -234,7 +234,7 @@ class ImageGridList extends Component {
                                     </svg>
                                 </button>
                             </td>
-                            <td>
+                            <td className="download-link">
                                 <a
                                     href={"http://localhost:3001/uploads/" + file.filename}
                                     style={
@@ -247,27 +247,30 @@ class ImageGridList extends Component {
                                     Download
                                 </a>
                             </td>
-                            <td>
-                                <button
-                                    className="btn btn-sm btn-primary button-tertiary"
+                            {/*<td>*/}
+                                {/*<input*/}
+                                    {/*className={"fileupload"}*/}
+                                    {/*type="file"*/}
+                                    {/*name="mypic"*/}
+                                    {/*style={file.isDir == "true" ? {} : { display: "none" }}*/}
+                                    {/*onChange={event1 =>*/}
+                                        {/*this.handleFileUploadUnderDir(event1, file.filepath)}*/}
+                                {/*/>*/}
+                            {/*</td>*/}
+                            <td className="delete-button">
+                                <div className="form-group">
+                                <Button
+                                    bsStyle="primary"
+                                    bsSize="small"
                                     type="button"
                                     style={file.isDir == "true" ? {} : { display: "none" }}
                                     onClick={event => this.props.handleDelete(event, file.filename)}
                                 >
                                     Delete
-                                </button>
+                                </Button>
+                                </div>
                             </td>
-                            <td>
-                                <input
-                                    className={"fileupload"}
-                                    type="file"
-                                    name="mypic"
-                                    style={file.isDir == "true" ? {} : { display: "none" }}
-                                    onChange={event1 =>
-                                        this.handleFileUploadUnderDir(event1, file.filepath)}
-                                />
-                            </td>
-                            <td>
+                            <td className="delete-button">
                                 <div className="form-group">
                                     <Button
                                         bsStyle="primary"
