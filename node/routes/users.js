@@ -192,7 +192,7 @@ router.get('/files', function (req, res, next) {
 router.get('/sharedfiles', function (req, res,next) {
 
     var resArr = [];
-    var getsharedfiles = "select * from userfiles where sharedwith = '"+ currentUser+"';";
+    var getsharedfiles = "select distinct * from userfiles where sharedwith = '"+ currentUser+"';";
     console.log("getsharedfiles"+ getsharedfiles);
 
     mysql.fetchData(function(err,results){
