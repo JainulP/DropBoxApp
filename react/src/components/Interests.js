@@ -3,7 +3,7 @@ import {Link,withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as API from '../api/API';
 import NavigationBar from "./NavigationBar";
-import HomePageHeader from "./homePageHeader";
+import Pageheaders from "./Pageheaders";
 
 class Interests extends Component {
 
@@ -34,7 +34,7 @@ class Interests extends Component {
         return(
             <div className="main-wrapper" ref="myref">
                 <NavigationBar></NavigationBar>
-                <HomePageHeader head={"Music"}></HomePageHeader>
+                <Pageheaders head={"Music"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">
@@ -49,7 +49,7 @@ class Interests extends Component {
                         </ul>
                     </div>
                 </div>
-                <HomePageHeader head={"Shows"}></HomePageHeader>
+                <Pageheaders head={"Shows"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">
@@ -64,7 +64,7 @@ class Interests extends Component {
                         </ul>
                     </div>
                 </div>
-                <HomePageHeader head={"Sports"}></HomePageHeader>
+                <Pageheaders head={"Sports"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">

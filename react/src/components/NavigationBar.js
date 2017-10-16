@@ -15,15 +15,15 @@ class NavigationBar extends Component{
                     </a>
                     <div className="maestro-nav__contents" data-reactid="14">
                         <ul className="maestro-nav__products" data-reactid="15">
-                            <li data-reactid="16">
-                                <div className="maestro-nav__product-wrapper" data-reactid="17">
-                  <span className="ue-effect-container" data-reactid="18">
-                     <a href="/home" className="maestro-nav__product maestro-nav__active-product" id="home" target="_self" rel="noopener" data-reactid="19">
-                        Home
-                     </a>
-                  </span>
-                                </div>
-                            </li>
+                            {/*<li data-reactid="16">*/}
+                                {/*<div className="maestro-nav__product-wrapper" data-reactid="17">*/}
+                  {/*<span className="ue-effect-container" data-reactid="18">*/}
+                     {/*<a href="/home" className="maestro-nav__product maestro-nav__active-product" id="home" target="_self" rel="noopener" data-reactid="19">*/}
+                        {/*Home*/}
+                     {/*</a>*/}
+                  {/*</span>*/}
+                                {/*</div>*/}
+                            {/*</li>*/}
                             <li data-reactid="21">
                                 <div className="maestro-nav__product-wrapper" data-reactid="22">
                   <span className="ue-effect-container" data-reactid="23">

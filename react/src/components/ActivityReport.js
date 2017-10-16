@@ -3,7 +3,7 @@ import {Link,withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as API from '../api/API';
 import NavigationBar from "./NavigationBar";
-import HomePageHeader from "./homePageHeader";
+import Pageheaders from "./Pageheaders";
 
 class ActivityReport extends Component {
 
@@ -36,7 +36,7 @@ class ActivityReport extends Component {
         return(
             <div className="main-wrapper" ref="myref">
                 <NavigationBar></NavigationBar>
-                <HomePageHeader head={"Activity Report"}></HomePageHeader>
+                <Pageheaders head={"Activity Report"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">

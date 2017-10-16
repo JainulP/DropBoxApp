@@ -66,17 +66,20 @@ class Login extends Component {
                               <div className="hr-label"><span className="hr-label__text">or</span></div>
                               <div className="login-form-width">
                                 <div className="dummy-height"></div>
+                                  <font color="red"> <span>{this.props.messageemail}</span></font>
                                 <div className="text-input-wrapper">
                                   <input className="text-input-input autofocus" type="email" name="login_email" id="pyxl8995788599097555052" placeholder="Email" onChange={event=>{this.setState({username:event.target.value});}}/>
                                 </div>
                                 <div className="dummy-height"></div>
                                 <div className="text-input-wrapper">
+                                    <font color="red"> <span>{this.props.messagepwd}</span></font>
                                   <input className="text-input-input autofocus" type="password" name="login_password" id="pyxl8995788599097555052" placeholder="Password" onChange={event=>{this.setState({password:event.target.value});}}/>
                                 </div>
                                 <div className="clearfix">
                                   <button type="submit" className="login-button button-primary" onClick={()=>this.props.handleLogin(this.state)}><div className="sign-in-text">Sign in</div><div className="sso-text">Continue</div></button>                                    </div>
                               </div>
-                                <span>{this.props.message}</span>
+                                <font color="red"> <span>{this.props.message}</span></font>
+                                {/*<span>{this.props.message}</span>*/}
                             </div>
                           </div>
                         </div>

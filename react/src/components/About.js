@@ -3,7 +3,7 @@ import {Link,withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as API from '../api/API';
 import NavigationBar from "./NavigationBar";
-import HomePageHeader from "./homePageHeader";
+import Pageheaders from "./Pageheaders";
 
 class About extends Component {
 
@@ -34,7 +34,7 @@ class About extends Component {
         return(
             <div className="main-wrapper" ref="myref">
                 <NavigationBar></NavigationBar>
-                <HomePageHeader head={"Overview"}></HomePageHeader>
+                <Pageheaders head={"Overview"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">
@@ -49,7 +49,7 @@ class About extends Component {
                         </ul>
                     </div>
                 </div>
-                <HomePageHeader head={"Work"}></HomePageHeader>
+                <Pageheaders head={"Work"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">
@@ -64,7 +64,7 @@ class About extends Component {
                         </ul>
                     </div>
                 </div>
-                <HomePageHeader head={"Education"}></HomePageHeader>
+                <Pageheaders head={"Education"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">
@@ -79,7 +79,7 @@ class About extends Component {
                         </ul>
                     </div>
                 </div>
-                <HomePageHeader head={"Contact"}></HomePageHeader>
+                <Pageheaders head={"Contact"}></Pageheaders>
                 <div className="main-body-wrapper">
                     <div className="maestro-app-content-activites">
                         <ul className="home-access-sections">

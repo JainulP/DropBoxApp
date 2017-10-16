@@ -15,7 +15,9 @@ class NewerHomePage extends Component {
 
     state = {
         isLoggedIn: false,
-        message: '',
+        messageemail: '',
+        messagepwd: '',
+        message:'',
         username: '',
         isFormValid :false
     };
@@ -29,15 +31,20 @@ class NewerHomePage extends Component {
             {
                 this.setState({
                     isLoggedIn: false,
-                    message: "Please enter an email"
+                    messageemail: "Please enter an email",
+                    messagepwd: "",
+                    message:""
                 });
             }
-            // else if(userdata.username != null || userdata.username != "")
-            // {
-            //     if (!userdata.username.match(/^[a-zA-Z]+$/)) {
+            // else if(userdata.username != null || userdata.username != "") {
+            //     var emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
+            //     console.log("Patter Email" + emailRegex.test(userdata.username));
+            //     if (!emailRegex.test(userdata.email)) {
             //         this.setState({
             //             isLoggedIn: false,
-            //             message: "Invalid email"
+            //             messageemail: "Invalid Email!",
+            //             messagepwd: "",
+            //             message:""
             //         });
             //     }
             // }
@@ -45,7 +52,9 @@ class NewerHomePage extends Component {
             {
                 this.setState({
                     isLoggedIn: false,
-                    message: "Please enter password"
+                    messagepwd: "Please enter password",
+                    messageemail: "",
+                    message: ""
                 });
             }
 
@@ -65,7 +74,9 @@ class NewerHomePage extends Component {
                         } else if (status === 401) {
                             this.setState({
                                 isLoggedIn: false,
-                                message: "Wrong username or password. Try again..!!"
+                                message: "Wrong username or password. Try again..!!",
+                                messageemail: "",
+                                messagepwd: ""
                             });
                         }
                     });
@@ -222,7 +233,7 @@ class NewerHomePage extends Component {
 
                 <Route exact path="/login" render={() => (
                     <div>
-                        <Login handleLogin={this.handleLogin} message={this.state.message}/>
+                        <Login handleLogin={this.handleLogin} message={this.state.message} messageemail={this.state.messageemail} messagepwd={this.state.messagepwd}/>
                         <Message message={this.state.message}/>
                     </div>
                 )}/>

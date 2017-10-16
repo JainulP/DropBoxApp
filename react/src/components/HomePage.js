@@ -30,21 +30,21 @@ class HomePage extends Component{
             isDir: false,
             sharedfiles:[]
         };
-        this.handleLogout = this.handleLogout.bind(this);
+        // this.handleLogout = this.handleLogout.bind(this);
     }
 
-    handleLogout = (event) => {
-        console.log("handle log out called");
-        localStorage.clear();
-        this.setState({
-            username: ""
-        });
-        console.log("afterlogout"+localStorage.getItem("username"));
-        API.logout()
-            .then((status) => {
-                this.props.history.push("/login");
-            });
-    };
+    // handleLogout = (event) => {
+    //     console.log("handle log out called");
+    //     localStorage.clear();
+    //     this.setState({
+    //         username: ""
+    //     });
+    //     console.log("afterlogout"+localStorage.getItem("username"));
+    //     API.logout()
+    //         .then((status) => {
+    //             this.props.history.push("/login");
+    //         });
+    // };
 
     handleFileUpload = (event) => {
         const payload = new FormData();
@@ -243,6 +243,7 @@ class HomePage extends Component{
                     {/*</div>*/}
                     <div className="right-section-nav">
                         <div className="form-group">
+
                             <input
                                 className="form-control"
                                 type="text"
@@ -276,15 +277,15 @@ class HomePage extends Component{
                             name="mypic"
                             onChange={this.handleFileUpload}
                         />
-                        <div className="form-group">
-                            <button
-                                className="btn btn-primary"
-                                type="button"
-                                onClick={this.handleLogout}
-                            >
-                                Logout
-                            </button>
-                        </div>
+                        {/*<div className="form-group">*/}
+                            {/*<button*/}
+                                {/*className="btn btn-primary"*/}
+                                {/*type="button"*/}
+                                {/*onClick={this.handleLogout}*/}
+                            {/*>*/}
+                                {/*Logout*/}
+                            {/*</button>*/}
+                        {/*</div>*/}
 
 
                     </div>

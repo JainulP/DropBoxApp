@@ -35,25 +35,6 @@ class SignUp extends Component {
     }
 
     handleSignup = (userdata) => {
-        // handleValidation(userdata) {
-        //     console.log("Inside validation function" + userdata);
-        //     var firstname = (userdata)["firstname"];
-        //     var lastname = (userdata)["lastname"];
-        //     var email = (userdata)["email"];
-        //     var password = (userdata)["password"];
-        //     var message1;
-        //     var isFormValid1 = false;
-        //     console.log("Firstname is" + firstname);
-        //
-        //     if (firstname == null || firstname == "") {
-        //         // this.setState({
-        //         //     isFormValid: false,
-        //         //     message: "First name cannot be empty!"
-        //         // });
-        //         isFormValid1= false;
-        //         message1=  "First name cannot be empty!";
-        //         console.log(message1);
-        //     }
         console.log("first"+userdata.firstname);
         if (userdata.firstname == null || userdata.firstname == "") {
             this.setState({
@@ -79,6 +60,18 @@ class SignUp extends Component {
                 emailerr: "email cannot be empty!"
             });
         }
+        // else if(userdata.email != null || userdata.email != "") {
+        //     var emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
+        //     console.log("Patter Email" + emailRegex.test(userdata.email));
+        //     if (emailRegex.test(userdata.email)) {
+        //         this.setState({
+        //             isFormValid: false,
+        //             firstnamerr: "",
+        //             lastnameerr: "",
+        //             emailerr: "Invalid Email!"
+        //         });
+        //     }
+        // }
         // else if(userdata.email != null || userdata.email != ""){
         //     console.log("here");
         //     if(!userdata.email.match("/^[a-zA-Z]+$/")) {
@@ -132,120 +125,6 @@ class SignUp extends Component {
         //}
 
     };
-
-    handleValidation(userdata) {
-        console.log("Inside validation function" + userdata);
-        var firstname = (userdata)["firstname"];
-        var lastname = (userdata)["lastname"];
-        var email = (userdata)["email"];
-        var password = (userdata)["password"];
-        var message1;
-        var isFormValid1 = false;
-        console.log("Firstname is" + firstname);
-
-        if (firstname == null || firstname == "") {
-            // this.setState({
-            //     isFormValid: false,
-            //     message: "First name cannot be empty!"
-            // });
-                isFormValid1= false;
-                message1=  "First name cannot be empty!";
-                console.log(message1);
-        }
-        // else if (typeof firstname !== "undefined") {
-        //     console.log("first name not undefined");
-        //     if (!firstname.match(/^[a-zA-Z]+$/)) {
-        //         console.log("not matched");
-        //         // this.setState({
-        //         //     isFormValid: false,
-        //         //     message: "First name should contain characters only!"
-        //         // });
-        //         isFormValid1= false;
-        //         message1=  "First name should contain characters only!";
-        //         console.log(message1);
-        //     }
-        //     console.log("first name not undefined11");
-        // }
-        //  else if (lastname == null || lastname == "") {
-        //     console.log("last name not undefined");
-        //     // this.setState({
-        //     //     isFormValid: false,
-        //     //     message: "Last name cannot be empty!"
-        //     // });
-        //     isFormValid1= false;
-        //     message1=  "Last name cannot be empty!";
-        //     console.log(message1);
-        // }
-        // else if (typeof lastname !== "undefined") {
-        //     if (!lastname.match(/^[a-zA-Z]+$/)) {
-        //         // this.setState({
-        //         //     isFormValid: false,
-        //         //     message: "Last name should contain characters only!"
-        //         // });
-        //         isFormValid1= false;
-        //         message1=  "Last name should contain characters only!";
-        //     }
-        // }
-        // else if (email == null || email == "") {
-        //     // this.setState({
-        //     //     isFormValid: false,
-        //     //     message: "Email cannot be empty!"
-        //     // });
-        //     isFormValid1= false;
-        //     message1=  "Email cannot be empty!";
-        //     console.log(message1);
-        //
-        // }
-        // else if (typeof email !== "undefined") {
-        //     // var reg = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-        //     if (!email.match(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/)) {
-        //         // this.setState({
-        //         //     isFormValid: false,
-        //         //     message: "Invalid Email Address!"
-        //         // });
-        //         isFormValid1= false;
-        //         message1=  "Invalid Email Address!";
-        //         console.log(message1);
-        //     }
-        // }
-        //  else if (password == null || password == "") {
-        //      // this.setState({
-        //      //     isFormValid: false,
-        //      //     message: "Password cannot be empty!"
-        //      // });
-        //     isFormValid1= false;
-        //     message1=  "Password cannot be empty!";
-        //     console.log(message1);
-        //  }
-        //  else if (password.length<5) {
-        //      // this.setState({
-        //      //     isFormValid: false,
-        //      //     message: "Password cannot be empty!"
-        //      // });
-        //     isFormValid1= false;
-        //     message1=  "Password too short!";
-        //     console.log(message1);
-        //  }
-         else
-         {
-             console.log("Else executed");
-             // this.setState({
-             //     isFormValid: true,
-             //     message: ""
-             // });
-             isFormValid1= true;
-             message1=  "";
-             console.log(message1);
-
-
-         }
-         console.log("j88888888888" + message1+ isFormValid1);
-         this.setState({
-             message: message1,
-            isFormValid: isFormValid1
-         },()=> {console.log("j8888888888811111" + this.state.message+ this.state.isFormValid)});
-
-    }
     render() {
         return (
             <div>

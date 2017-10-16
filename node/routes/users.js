@@ -13,9 +13,15 @@ var dt = dateTime.create();
 dt.format('m/d/Y H:M:S');
 console.log(new Date(dt.now()));
 var shared = [];
+var bcrypt = require('bcrypt');
 
-var Cryptr = require('cryptr'),
-    cryptr = new Cryptr('myTotalySecretKey');
+
+
+var salt = bcrypt.genSaltSync(10);
+var hash ;
+//
+// var Cryptr = require('cryptr'),
+//     cryptr = new Cryptr('myTotalySecretKey');
 
 
 // var encryptedString = cryptr.encrypt('bacon'),
@@ -42,8 +48,8 @@ router.post('/doLogin', function (req, res, next) {
     req.session.username = username;
     console.log("Session initialized");
     //req.session.userss = "hello";
-    console.log("Decrypted Password"+cryptr.encrypt(req.body.password));
-    var getUsers = "select * from UserData where UserName = '"+req.body.username+"' and Password = '" + cryptr.encrypt(req.body.password) + "';";
+    // console.log("Decrypted Password"+cryptr.encrypt(req.body.password));
+    var getUsers = "select * from UserData where UserName = '"+req.body.username+  "';";
     console.log("getAllUsers"+ getUsers);
     mysql.fetchData(function(err,results){
         if(err){
@@ -53,11 +59,20 @@ router.post('/doLogin', function (req, res, next) {
         {
             if(results.length > 0){
                 console.log(JSON.stringify(results));
-                currentUserfirstname = results["firstname"];
-                currentuserlastname = results["lastname"];
+                currentUserfirstname = results[0].firstname;
+                currentuserlastname = results[0].lastname;
                 console.log("fname   "+ currentUserfirstname);
+
                 console.log("lname   "+ currentuserlastname);
-                return res.status(201).send();
+                console.log("password   "+ results[0].Password);
+                console.log("decryption+"+(bcrypt.compareSync(password, results[0].Password)));
+                if(bcrypt.compareSync(password, results[0].Password)){
+
+                    return res.status(201).send();
+                }
+                else {
+                    return res.status(401).send();
+                }
             }
             else
             {
@@ -71,8 +86,11 @@ router.post('/doLogin', function (req, res, next) {
 });
 router.post('/doSignUp', function (req, res, next) {
    // console.log("session username: "+ req.session.username);
-    console.log("Encrypted Password"+cryptr.encrypt(req.body.password));
-     var putUser = "Insert into UserData(UserName,firstname,lastname,password) values('"+req.body.email+"','"+req.body.firstname+"','"+ req.body.lastname +"','"+ cryptr.encrypt(req.body.password) + "');";
+   //  console.log("Encrypted Password"+cryptr.encrypt(req.body.password));
+     var salt = bcrypt.genSaltSync(10);
+// Hash the password with the salt
+     hash = bcrypt.hashSync(req.body.password.toString(), salt);
+     var putUser = "Insert into UserData(UserName,firstname,lastname,Password) values('"+req.body.email+"','"+req.body.firstname+"','"+ req.body.lastname +"','"+ hash + "');";
     console.log("putuser"+ putUser);
     mysql.putData(function(err,results){
         if(err){
@@ -91,6 +109,7 @@ router.get('/logout', function(req,res) {
     console.log(currentUser);
     console.log(req.session.username);
     req.session.destroy();
+    currentUser = "";
     console.log('Session Destroyed');
     console.log(currentUser);
     res.status(200).send();

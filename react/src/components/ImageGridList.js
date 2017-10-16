@@ -390,7 +390,7 @@ class ImageGridList extends Component {
                                 <div>
                                     <Modal show={this.state.showFileUnderDirModal} onHide={this.close}>
                                         <Modal.Header closeButton>
-                                            <Modal.Title>Modal heading</Modal.Title>
+                                            <Modal.Title>{this.state.dirPath}</Modal.Title>
                                         </Modal.Header>
 
                                         <Modal.Body>
