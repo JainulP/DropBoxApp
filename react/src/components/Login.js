@@ -20,11 +20,11 @@ class Login extends Component {
             username: "",
             password: ""
         });
-        var username = localStorage.getItem("username");
-        if(username != null)
-        {
-            this.props.history.push("/home");
-        }
+        // var username = localStorage.getItem("username");
+        // if(username != null)
+        // {
+        //     this.props.history.push("/home");
+        // }
     }
 
 

@@ -14,26 +14,13 @@ dt.format('m/d/Y H:M:S');
 console.log(new Date(dt.now()));
 var shared = [];
 var bcrypt = require('bcrypt');
+var fs = require('fs');
 
 
 
 var salt = bcrypt.genSaltSync(10);
 var hash ;
-//
-// var Cryptr = require('cryptr'),
-//     cryptr = new Cryptr('myTotalySecretKey');
 
-
-// var encryptedString = cryptr.encrypt('bacon'),
-//     decryptedString = cryptr.decrypt(encryptedString);
-//
-// console.log(encryptedString);  // d7233809c0
-// console.log(decryptedString);  // bacon
-
-
-// router.get('/check',function (req,res) {
-//     //res.send("Session"+req.session.username);
-// });
 router.get('/',function (req,res) {
    // req.session.username = "Jainul";
     //res.send("Session"+req.session.username);
@@ -46,9 +33,8 @@ router.post('/doLogin', function (req, res, next) {
     password = req.param("password");
     console.log(username+" "+password);
     req.session.username = username;
-    console.log("Session initialized");
-    //req.session.userss = "hello";
-    // console.log("Decrypted Password"+cryptr.encrypt(req.body.password));
+
+
     var getUsers = "select * from UserData where UserName = '"+req.body.username+  "';";
     console.log("getAllUsers"+ getUsers);
     mysql.fetchData(function(err,results){
@@ -62,7 +48,6 @@ router.post('/doLogin', function (req, res, next) {
                 currentUserfirstname = results[0].firstname;
                 currentuserlastname = results[0].lastname;
                 console.log("fname   "+ currentUserfirstname);
-
                 console.log("lname   "+ currentuserlastname);
                 console.log("password   "+ results[0].Password);
                 console.log("decryption+"+(bcrypt.compareSync(password, results[0].Password)));
@@ -98,6 +83,12 @@ router.post('/doSignUp', function (req, res, next) {
         }
         else
         {
+            mkdirp('./public/uploads/'+req.body.email , function (err) {
+                if(!err) {
+                    console.log("No error");
+                    res.status(204).end();
+                }
+            });
             return res.status(201).send();
         }
     },putUser);
@@ -115,37 +106,14 @@ router.get('/logout', function(req,res) {
     res.status(200).send();
 });
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './public/uploads/')
-    },
-    filename: function (req, file, cb) {
-        cb(null,  file.originalname)
-    }
-});
 
-var upload = multer({storage:storage});
 
 /* GET files listing. */
 router.get('/files', function (req, res, next) {
-    //var resArr = [];
 
-    // glob("public/uploads/*", function (er, files) {
-    //
-    //     var resArr = files.map(function (file) {
-    //         var fileJSON = {};
-    //         fileJSON.filename = file.split('/')[2];
-    //         fileJSON.filepath = file;
-    //         fileJSON.cols = 2  ;
-    //         return fileJSON;
-    //     });
-    //
-    //     console.log(resArr);
-    //     res.status(200).send(resArr);
-    // });
 
     var resArr = [];
-    var getallfiles = "select distinct username,filedirectorypath,isDirectory,isStarred from userfiles where username = '"+ currentUser+"' and sharedwith IS NULL ";
+    var getallfiles = "select distinct username,filedirectorypath,isDirectory,isStarred from userfiles where usermail = '"+ currentUser+"' and sharedwith IS NULL ";
     console.log("getallfiles"+ getallfiles);
 
     mysql.fetchData(function(err,results){
@@ -188,12 +156,66 @@ router.get('/files', function (req, res, next) {
     },getallfiles);
 });
 
+router.get('/files1', function (req, res, next) {
+    var resArr = [];
+    var getallfiles = "select  * from userfiles where usermail = '"+  currentUser +"' and filedirectorypath like 'public/uploads/"+ req.query.currentfolder+"/%'";
+    console.log("getallfiles"+ getallfiles);
+
+    mysql.fetchData(function(err,results){
+        if(err){
+            throw err;
+        }
+        else {
+            //console.log("db res:"+ results);
+            if (results.length > 0) {
+                console.log("files1 result3333"+JSON.stringify(results));
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var fileJSON = {};
+                    var resJSON = JSON.stringify(results[i]);
+                    var pathstring = "public/uploads/"+req.query.currentfolder;
+                    var pathlenght=  pathstring.split("/").length;
+                    console.log("lenght",pathlenght);
+                    fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[pathlenght];
+                    fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[pathlenght+1];
+                    fileJSON.fileowner = JSON.parse(resJSON)["usermail"];
+                    console.log("files nam" + fileJSON.filename);
+                    console.log("files nam111111" + fileJSON.filename1);
+                    console.log("files owner" + fileJSON.fileowner);
+                    if(fileJSON.filename1 == undefined && JSON.parse(resJSON)["sharedwith"] == null) {
+
+                        fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
+                        console.log("filepath&&&&&&&&&"+ fileJSON.filepath);
+                        fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
+                        fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
+                        fileJSON.cols = 2;
+
+                        resArr.push(fileJSON);
+                    }
+                }
+
+                return res.status(200).send(JSON.stringify(resArr));
+
+            }
+            else
+            {
+                return res.status(200).end(JSON.stringify(resArr));
+
+            }
+        }
+
+    },getallfiles);
+});
+
 
 router.get('/sharedfiles', function (req, res,next) {
 
+
     var resArr = [];
-    var getsharedfiles = "select distinct * from userfiles where sharedwith = '"+ currentUser+"';";
-    console.log("getsharedfiles"+ getsharedfiles);
+    var getsharedfiles1 = "select distinct * from userfiles where sharedwith = '"+ currentUser+"';";
+    console.log("getsharedfiles1"+ getsharedfiles1);
+    console.log("fildefolder"+req.query.currentfolder);
 
     mysql.fetchData(function(err,results){
         if(err){
@@ -208,12 +230,19 @@ router.get('/sharedfiles', function (req, res,next) {
 
                     var fileJSON = {};
                     var resJSON = JSON.stringify(results[i]);
-                    fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[2];
-                    fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
-                    fileJSON.fileowner = JSON.parse(resJSON)["username"];
-                    console.log("filename1", fileJSON.filename1);
+                    var pathstring = "public/uploads/"+req.query.currentfolder;
+                    var pathlenght=  pathstring.split("/").length;
+                    console.log("lenght",pathlenght);
+                    fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[pathlenght];
+                    fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[pathlenght+1];
+                    fileJSON.fileowner = JSON.parse(resJSON)["usermail"];
+                    console.log("files nam" + fileJSON.filename);
+                    console.log("files nam111111" + fileJSON.filename1);
+                    console.log("files owner" + fileJSON.fileowner);
                     if(fileJSON.filename1 == undefined) {
+
                         fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
+                        console.log("filepath&&&&&&&&&"+ fileJSON.filepath);
                         fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
                         fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
                         fileJSON.cols = 2;
@@ -233,43 +262,114 @@ router.get('/sharedfiles', function (req, res,next) {
         }
 
 
-    },getsharedfiles);
+    },getsharedfiles1);
+
+
+});
+
+router.get('/sharedfilesunderdir', function (req, res,next) {
+    console.log("get%%%%%% called"+ currentUser);
+console.log("get%%%%%% called");
+    var resArr = [];
+    var getsharedfilesunderdir = "select distinct * from userfiles where sharedwith = '"+ currentUser +"' and filedirectorypath like 'public/uploads/"+ req.query.currentfolder+"/%'";
+    console.log("getsharedfilesunderdir"+ getsharedfilesunderdir);
+    console.log("fildefolder"+req.query.currentfolder);
+
+    mysql.fetchData(function(err,results){
+        if(err){
+            console.log("SDhasted erro" +err);
+            throw err;
+        }
+        else {
+            if (results.length > 0) {
+                console.log("results of shared file"+JSON.stringify(results));
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var fileJSON = {};
+                    var resJSON = JSON.stringify(results[i]);
+                    var pathstring = "public/uploads/"+req.query.currentfolder;
+                    var pathlenght=  pathstring.split("/").length;
+                    console.log("lenght",pathlenght);
+                    fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[pathlenght];
+                    fileJSON.filename1 = JSON.parse(resJSON)["filedirectorypath"].split('/')[pathlenght+1];
+                    fileJSON.fileowner = JSON.parse(resJSON)["username"];
+                    console.log("filename1", fileJSON.filename);
+                     if(fileJSON.filename1 == undefined) {
+                    fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
+                    fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
+                    fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
+                    fileJSON.cols = 2;
+
+                    resArr.push(fileJSON);
+                    }
+
+                }
+
+                return res.status(200).send(JSON.stringify(resArr));
+
+            }
+            else
+            {
+                return res.status(200).end(JSON.stringify(resArr));
+            }
+        }
+
+
+    },getsharedfilesunderdir);
 
 
 });
 
 
+router.post('/upload', function (req, res, next) {
 
-router.post('/upload', upload.single('mypic'), function (req, res, next) {
+
     console.log(req.file);
-    var putuserfiledata = "Insert into userfiles(username,filedirectorypath,isDirectory,isStarred) values('"+currentUser+"','" +req.file.path+"', 'false', 'false" + "');";
-    console.log("putuserfiledata"+ putuserfiledata);
-    mysql.putData(function(err,results){
-        if(err){
-            throw err;
+    console.log("current folder"+req.query.currentfolder);
+
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, './public/uploads/'+req.query.currentfolder+"/")
+        },
+        filename: function (req, file, cb) {
+            cb(null,  file.originalname)
         }
-        else
-        {
-            if(results.length > 0){
-                console.log(JSON.stringify(results));
-                res.send("Success");
-            }
+    });
+
+    var uploadfile = multer({storage:storage}).single('myfile');
+
+    uploadfile(req,res,function (err) {
+        if(err){console.log(err);}
+        else {
+            var putuserfiledata = "Insert into userfiles(usermail,filedirectorypath,isDirectory,isStarred) values('" + currentUser + "','" + req.file.path + "', 'false', 'false" + "');";
+            console.log("putuserfiledata" + putuserfiledata);
+            mysql.putData(function (err, results) {
+                if (err) {
+                    throw err;
+                }
+                else {
+                    if (results.length > 0) {
+                        console.log(JSON.stringify(results));
+                        res.send("Success");
+                    }
+                }
+            }, putuserfiledata);
+            var putUserLifeEvent = "Insert into UserLifeEvents(UserName,events,eventtime) values('" + currentUser + "','" + currentUser + "  uploaded " + req.file.originalname + " file." + "','" + Date(dt.now()) + "');";
+            console.log("putUserLifeEvent" + putUserLifeEvent);
+            mysql.putData(function (err, results) {
+                if (err) {
+                    throw err;
+                }
+                else {
+                    if (results.length > 0) {
+                        console.log(JSON.stringify(results));
+                        res.send("Success");
+                    }
+                }
+            }, putUserLifeEvent);
         }
-    },putuserfiledata);
-    var putUserLifeEvent = "Insert into UserLifeEvents(UserName,events,eventtime) values('"+currentUser+"','"+ currentUser+ "  uploaded "+req.file.originalname+" file." +"','"+ Date(dt.now())+ "');";
-    console.log("putUserLifeEvent"+ putUserLifeEvent);
-    mysql.putData(function(err,results){
-        if(err){
-            throw err;
-        }
-        else
-        {
-            if(results.length > 0){
-                console.log(JSON.stringify(results));
-                res.send("Success");
-            }
-        }
-    },putUserLifeEvent);
+        });
     res.status(204).end();
 });
 
@@ -293,7 +393,7 @@ var filename;
         if(err){console.log(err);}
         else
         {
-            var putuserfiledata = "Insert into userfiles(username,filedirectorypath,isDirectory,isStarred) values('"+currentUser+"','" +req.file.path+"', 'false', 'false" + "');";
+            var putuserfiledata = "Insert into userfiles(usermail,filedirectorypath,isDirectory,isStarred) values('"+currentUser+"','" +req.file.path+"', 'false', 'false" + "');";
             console.log("putuserfiledata"+ putuserfiledata);
             mysql.putData(function(err,results){
                 if(err){
@@ -331,10 +431,11 @@ var filename;
 
 router.post('/makedir', function (req,res) {
     console.log("Directory name"+req.body.dirName);
-    mkdirp('./public/uploads/'+req.body.dirName , function (err) {
+    console.log("currwnt Directory name"+req.body.currentfolder);
+    mkdirp('./public/uploads/'+req.body.currentfolder+"/"+req.body.dirName , function (err) {
         if(!err) {
             console.log("No error");
-            var putuserfiledata = "Insert into userfiles(username,filedirectorypath,isDirectory,isStarred) values('"+currentUser+"','" +"public/uploads/"+req.body.dirName+"','" + req.body.isDir + "', 'false'"+ ");";
+            var putuserfiledata = "Insert into userfiles(usermail,filedirectorypath,isDirectory,isStarred,username) values('"+currentUser+"','" +"public/uploads/"+req.body.currentfolder +"/"+req.body.dirName+"','" + req.body.isDir + "', 'false', '"+ currentUserfirstname + currentuserlastname+ "');";
             console.log("putuserfiledata"+ putuserfiledata);
             mysql.putData(function(err,results){
                 if(err){
@@ -373,72 +474,116 @@ router.post('/shareDirectory', function (req, res, next) {
     console.log("In shared directory"+req.body.shareDirectoryPath);
     console.log("shared file with"+req.body.shareWith);
     console.log("shared file via"+req.body.shareType);
-    console.log("shared file via"+req.body.isDir);
-    // var arraySharedwithUsername = req.body.shareWith.trim().split(",");
-    // var dirpathlength = req.body.shareDirectoryPath.split("/").length;
-    // var isDire = false;
-    // console.log("dirpathhhhhh"+dirpathlength);
-    // if(dirpathlength >3)
-    // {isDire = true}
-    // else
-    // {
-    //     isDire = false
+    console.log("shared file dir"+req.body.isDir);
+
+    //var resArr = [];
+    var getallfilesUndersharedDirectory = "select filedirectorypath,isDirectory,isStarred from userfiles where usermail = '"+ currentUser+"' and filedirectorypath like '" + req.body.shareDirectoryPath + "%'";
+
+    console.log("getallfilesUndersharedDirectory"+ getallfilesUndersharedDirectory);
+
+    mysql.fetchData(function(err,results){
+        if(err){
+            throw err;
+        }
+        else {
+            //console.log("db res:"+ results);
+            if (results.length > 0) {
+                console.log(JSON.stringify(results));
+
+                for (var i = 0; i < results.length; i++) {
+
+                    var fileJSON = {};
+                    var resJSON = JSON.stringify(results[i]);
+                    //fileJSON.filename = JSON.parse(resJSON)["filedirectorypath"].split('/')[3];
+                    fileJSON.filepath = JSON.parse(resJSON)["filedirectorypath"];
+                    fileJSON.isDir = JSON.parse(resJSON)["isDirectory"];
+                    fileJSON.isStarred = JSON.parse(resJSON)["isStarred"];
+                    fileJSON.cols = 2  ;
+
+                    //resArr.push(fileJSON);
+
+                    var shareDirectory = "Insert into userfiles(usermail,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" +  fileJSON.filepath+ "','"+ fileJSON.isDir + "','" + req.body.shareWith+ "');";
+                    //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
+                    console.log("shareDirectory"+ shareDirectory);
+                    mysql.putData(function(err,results){
+                        if(err){
+                            throw err;
+                        }
+                        else
+                        {
+
+                            console.log("sharing result"+JSON.stringify(results));
+                            //res.send("Success");
+                            res.status(204).end();
+                        }
+                    },shareDirectory);
+                }
+
+                //return res.status(200).send(JSON.stringify(resArr));
+
+            }
+            // else
+            // {
+            //     return res.status(200).end(JSON.stringify(resArr));
+            //
+            // }
+        }
+
+    },getallfilesUndersharedDirectory);
+
+        // var arraySharedWithemail = req.body.shareWith.split(",");
+        // for(var index =0; index < arraySharedWithemail.length; index++)
+        // {
+        //     var shareDirectory = "Insert into userfiles(usermail,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" + req.body.shareDirectoryPath+ "','"+ req.body.isDir + "','" + arraySharedWithemail[index]+ "');";
+        //     //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
+        //     console.log("shareDirectory"+ shareDirectory);
+        //     mysql.putData(function(err,results){
+        //         if(err){
+        //             throw err;
+        //         }
+        //         else
+        //         {
+        //
+        //             console.log("sharing result"+JSON.stringify(results));
+        //             //res.send("Success");
+        //             res.status(204).end();
+        //         }
+        //     },shareDirectory);
+        // }
     // }
-
-    if(req.body.shareType == "email"){
-        var arraySharedWithemail = req.body.shareWith.split(",");
-        for(var index =0; index < arraySharedWithemail.length; index++)
-        {
-            var shareDirectory = "Insert into userfiles(username,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" + req.body.shareDirectoryPath+ "','"+ req.body.isDir + "','" + arraySharedWithemail[index]+ "');";
-            //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
-            console.log("shareDirectory"+ shareDirectory);
-            mysql.putData(function(err,results){
-                if(err){
-                    throw err;
-                }
-                else
-                {
-
-                    console.log(JSON.stringify(results));
-                    //res.send("Success");
-                    res.status(204).end();
-                }
-            },shareDirectory);
-        }
-    }
-    else if(req.body.shareType == "username")
-    {
-        var arraySharedwithUsername = req.body.shareWith.trim().split(",");
-        for(var index =0; index < arraySharedwithUsername.length; index++)
-        {
-            var shareDirectory = "Insert into userfiles(username,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" + req.body.shareDirectoryPath+ "','"+ req.body.isDir + "','" + arraySharedwithUsername[index]+ "');";
-            //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
-            console.log("shareDirectory"+ shareDirectory);
-            mysql.putData(function(err,results){
-                if(err){
-                    throw err;
-                }
-                else
-                {
-
-                    console.log(JSON.stringify(results));
-                    //res.send("Success");
-                    res.status(204).end();
-                }
-            },shareDirectory);
-        }
-    }
+    // else if(req.body.shareType == "username")
+    // {
+    //     var arraySharedwithUsername = req.body.shareWith.trim().split(",");
+    //     for(var index =0; index < arraySharedwithUsername.length; index++)
+    //     {
+    //         var shareDirectory = "Insert into userfiles(usermail,filedirectorypath,isDirectory,sharedwith) values('"+currentUser + "','" + req.body.shareDirectoryPath+ "','"+ req.body.isDir + "','" + arraySharedwithUsername[index]+ "');";
+    //         //var putsharedDirectory = "Insert into shareddata(sharedwith,fileowner,path) values('"+req.body.shareWith+"','"+"jainul.patel"+"','"+ req.body.shareDirectoryPath + "');";
+    //         console.log("shareDirectory"+ shareDirectory);
+    //         mysql.putData(function(err,results){
+    //             if(err){
+    //                 throw err;
+    //             }
+    //             else
+    //             {
+    //
+    //                 console.log(JSON.stringify(results));
+    //                 //res.send("Success");
+    //                 res.status(204).end();
+    //             }
+    //         },shareDirectory);
+    //     }
+    // }
 
 
 });
 
 
 router.post('/deleteIt', function (req,res) {
-    del(['./public/uploads/'+req.query.fileName]).then(paths => {
+    del(['./'+req.query.fileName]).then(paths => {
         console.log('Deleted files and folders:\n', paths.join('\n'));
         console.log("No error");
 
-        var deletefile = "delete from userfiles where filedirectorypath = 'public/uploads/"+req.query.fileName+ "';";
+        var deletefile = "delete from userfiles where filedirectorypath = '"+req.query.fileName+ "';";
         console.log("deletefile"+ deletefile);
         mysql.putData(function(err,results){
             if(err){
@@ -489,7 +634,7 @@ router.post('/toggleStar', function (req, res) {
     //     }
     //
     // },getsharedfiles);
-    var toggleStar = "update userfiles set isStarred = '" + req.body.isStarred +  "' where username =  '" + currentUser + "' and filedirectorypath = '"+ req.body.shareDirectoryPath + "';";
+    var toggleStar = "update userfiles set isStarred = '" + req.body.isStarred +  "' where usermail =  '" + currentUser + "' and filedirectorypath = '"+ req.body.shareDirectoryPath + "';";
     console.log("toggleStar"+ toggleStar);
     mysql.putData(function(err,results){
         if(err){
@@ -526,7 +671,7 @@ router.get('/getfilesUnderDir', function (req, res, next) {
 
     console.log(req.query.dirPath);
     var resArr = [];
-    var getallfilesUnderDirectory = "select filedirectorypath,isDirectory,isStarred from userfiles where username = '"+ currentUser+"' and filedirectorypath like '%" + req.query.dirPath + "'";
+    var getallfilesUnderDirectory = "select filedirectorypath,isDirectory,isStarred from userfiles where usermail = '"+ currentUser+"' and filedirectorypath like '%" + req.query.dirPath + "'";
 
     console.log("getallfilesUnderDirectory"+ getallfilesUnderDirectory);
 
@@ -574,10 +719,11 @@ router.get('/setLoggedInUser', function (req, res, next) {
         if(req.session != null) {
             req.session.username = currentUser;
             console.log("session username", req.session.username);
+            console.log("curr uswr"+currentUser);
         }
-        return res.status(200);
+        //return res.status(200);
     }
-    return res.status(200);
+    return res.status(200).send();
 });
 
 router.get('/getFileUnderDir', function (req, res,next) {

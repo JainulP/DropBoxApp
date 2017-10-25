@@ -36,14 +36,14 @@ class SignUp extends Component {
 
     handleSignup = (userdata) => {
         console.log("first"+userdata.firstname);
+        var emailRegex = /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
+
         if (userdata.firstname == null || userdata.firstname == "") {
             this.setState({
                 isFormValid: false,
                 firstnamerr: "First name cannot be empty!"
             });
-            // isFormValid1= false;
-            // message1=  "First name cannot be empty!";
-            // console.log(message1);
+
         }
         else if(userdata.lastname == null || userdata.lastname == ""){
             this.setState({
@@ -60,29 +60,15 @@ class SignUp extends Component {
                 emailerr: "email cannot be empty!"
             });
         }
-        // else if(userdata.email != null || userdata.email != "") {
-        //     var emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
-        //     console.log("Patter Email" + emailRegex.test(userdata.email));
-        //     if (emailRegex.test(userdata.email)) {
-        //         this.setState({
-        //             isFormValid: false,
-        //             firstnamerr: "",
-        //             lastnameerr: "",
-        //             emailerr: "Invalid Email!"
-        //         });
-        //     }
-        // }
-        // else if(userdata.email != null || userdata.email != ""){
-        //     console.log("here");
-        //     if(!userdata.email.match("/^[a-zA-Z]+$/")) {
-        //         this.setState({
-        //             isFormValid: false,
-        //             firstnamerr: "",
-        //             lastnameerr: "",
-        //             emailerr: "Invalid Email!!"
-        //         });
-        //     }
-        // }
+        else if(userdata.email != null &&  userdata.email != "" && (!emailRegex.test(userdata.email))) {
+            this.setState({
+                isFormValid: false,
+                firstnamerr:"",
+                lastnameerr:"",
+                emailerr: "Invalid email!"
+            });
+        }
+
         else if(userdata.password == null || userdata.password == ""){
             this.setState({
                 isFormValid: false,
@@ -92,7 +78,7 @@ class SignUp extends Component {
                 passworderr: "Password cannot be empty!"
             });
         }
-        else if(userdata.password.length<5){
+        else if(userdata.password != null && userdata.password != "" && userdata.password.length<5){
             this.setState({
                 isFormValid: false,
                 firstnamerr:"",

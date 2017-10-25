@@ -10,6 +10,7 @@ import activities from "./activities";
 import DirectoryFile from "./DirectoryFile";
 import About from "./About";
 import Interests from "./Interests";
+import HomePageBootstrap from "./HomePageBootstrap";
 
 class NewerHomePage extends Component {
 
@@ -26,7 +27,8 @@ class NewerHomePage extends Component {
     handleLogin = (userdata) => {
 
         {
-            console.log("login clicked"+userdata.username);
+            //console.log("login clicked"+userdata.username);
+            var emailRegex = /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
             if(userdata.username == null || userdata.username == "")
             {
                 this.setState({
@@ -36,18 +38,14 @@ class NewerHomePage extends Component {
                     message:""
                 });
             }
-            // else if(userdata.username != null || userdata.username != "") {
-            //     var emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
-            //     console.log("Patter Email" + emailRegex.test(userdata.username));
-            //     if (!emailRegex.test(userdata.email)) {
-            //         this.setState({
-            //             isLoggedIn: false,
-            //             messageemail: "Invalid Email!",
-            //             messagepwd: "",
-            //             message:""
-            //         });
-            //     }
-            // }
+            else if(userdata.username != null &&  userdata.username != "" && !emailRegex.test(userdata.username)) {
+                    this.setState({
+                        isLoggedIn: false,
+                        messageemail: "Invalid Email!",
+                        messagepwd: "",
+                        message:""
+                    });
+            }
             else if(userdata.password == null || userdata.password == "")
             {
                 this.setState({
@@ -226,15 +224,16 @@ class NewerHomePage extends Component {
             <div>
                 <Route exact path="/" render={() => (
                     <div>
-                    <Login handleLogin={this.handleLogin}/>
-                    <Message message={this.state.message}/>
+<HomePageBootstrap/>
+                    {/*<Login handleLogin={this.handleLogin}/>*/}
+                    {/*<Message message={this.state.message}/>*/}
                     </div>
                 )}/>
 
                 <Route exact path="/login" render={() => (
                     <div>
                         <Login handleLogin={this.handleLogin} message={this.state.message} messageemail={this.state.messageemail} messagepwd={this.state.messagepwd}/>
-                        <Message message={this.state.message}/>
+                        {/*<Message message={this.state.message}/>*/}
                     </div>
                 )}/>
 

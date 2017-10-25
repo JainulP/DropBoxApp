@@ -87,3 +87,25 @@
     padding: 0 0 0 40px;
     height: 56px;
 }
+.modal-backdrop.in {
+    opacity: 0.5;
+}
+modal-header {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    border-top-left-radius: .3rem;
+    border-top-right-radius: .3rem;
+}
+.modalclose{
+    margin-right: -100px;
+}
+.input-share-with{
+    width:70%;
+    margin-right: 20px;
+}

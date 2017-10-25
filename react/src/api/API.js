@@ -94,16 +94,33 @@ export const getImages = () =>
             return error;
         });
 
-export const getSharedFiles = () =>
-    fetch(`${api}/users/sharedfiles`)
+export const getfiles = (param) =>
+    fetch(`${api}/users/files1?currentfolder=`+param)
+        .then(res => {
+            //console.log("response"+res.body);
+            return res.json();
+        })
+        .catch(error => {
+            console.log("This is error.");
+            return error;
+        });
+
+export const getSharedFiles = (param) =>
+    fetch(`${api}/users/sharedfiles?currentfolder=`+param)
         .then(res =>   res.json())
         .catch(error => {
             console.log("This is error."+error);
             return error;
         });
-
-export const uploadFile = (payload) =>
-    fetch(`${api}/users/upload`, {
+export const getSharedFilesUnderDir = (param) =>
+    fetch(`${api}/users/sharedfilesunderdir?currentfolder=`+param)
+        .then(res =>  {return  res.json()})
+        .catch(error => {
+            console.log("This is error."+error);
+            return error;
+        });
+export const uploadFile = (payload,param) =>
+    fetch(`${api}/users/upload?currentfolder=`+param, {
         method: 'POST',
         body: payload
     }).then(res => {
